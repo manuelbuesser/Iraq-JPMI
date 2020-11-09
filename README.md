@@ -1,3 +1,3 @@
 # Iraq-JPMI
-Dashboard for the Iraq JPMI (draft version)
+Shiny dashboard for the Iraq JPMI (draft version) <br>
 Preview: https://mabues.shinyapps.io/JPMI/
