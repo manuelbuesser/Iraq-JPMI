@@ -346,17 +346,7 @@ table_changes <- prices_changes_items %>%                                       
 #### 6 UI ######################################################################
 
 ui <- bootstrapPage(
-                                                                                  # ensure that the 6th element in the tab bar (JRAM) is right-aligned (some CSS does the trick)
-    tags$head(tags$style(HTML("
-                           .navbar-nav {
-                           float: none !important;
-                           }
-                           .navbar-nav > li:nth-child(7) {
-                           float: right;
-                           }
-                           "))),
-    
-    
+
     navbarPage("Joint Price Monitoring Initiative (JPMI)",                        # define dashboard title
                theme = shinytheme("simplex"),                                     # set theme
                
