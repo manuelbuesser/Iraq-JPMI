@@ -257,7 +257,6 @@ prices_changes <- prices_country_long %>%                                       
     select(-Date) %>%
     mutate(Price  = format(Price, big.mark=","),
            change2 = replace_na(change2, "NA")) %>%
-    #mutate(change = ifelse(change > 0, change, paste0("\u25BA", change)))%>%
     rename("Price (in IQD)" = Price,
            "Bi-monthly change" = change,
            "Yearly change" = change2)
@@ -269,7 +268,7 @@ prices_changes_meb <- prices_changes %>%
     filter(str_detect(Item, "^SMEB")) %>%
     arrange(Item)
 
-data_latest <- data %>%                                                           # latest dataset for download on dashboard page
+data_latest <- data %>%                                                                                   # latest dataset for download on dashboard page
     filter(date == dates_max) %>%
     select(-(106:ncol(data)), -ends_with("_restock"))
 
@@ -324,7 +323,6 @@ month_collected      <- paste0(format(dates_max, "%B"), " ",format(dates_max, "%
 shops_covered        <- nrow(data_latest)
 districts_covered    <- n_distinct(data_latest$district, na.rm = FALSE)
 governorates_covered <- n_distinct(data_latest$governorate, na.rm = FALSE)
-#governorates_covered <- paste(sort(unique(data_latest$governorate)), collapse = ", ")
 overview_round       <- data.frame(figure = c("Month", "Shops covered", "Districts covered", "Governorates covered"),
                                    value  = c(month_collected, shops_covered, districts_covered, governorates_covered)
                                    )
@@ -349,14 +347,14 @@ table_changes <- prices_changes_items %>%                                       
 
 ui <- bootstrapPage(
                                                                                   # ensure that the 6th element in the tab bar (JRAM) is right-aligned (some CSS does the trick)
-    #tags$head(tags$style(HTML("
-    #                       .navbar-nav {
-    #                       float: none !important;
-    #                       }
-    #                       .navbar-nav > li:nth-child(6) {
-    #                       float: right;
-    #                       }
-    #                       "))),
+    tags$head(tags$style(HTML("
+                           .navbar-nav {
+                           float: none !important;
+                           }
+                           .navbar-nav > li:nth-child(7) {
+                           float: right;
+                           }
+                           "))),
     
     
     navbarPage("Joint Price Monitoring Initiative (JPMI)",                        # define dashboard title
@@ -412,7 +410,7 @@ ui <- bootstrapPage(
                             absolutePanel(
                                 id = "home", class = "panel panel-default", fixed = FALSE, draggable = FALSE,
                                 top = "20", left = "440", right = "auto", bottom = "auto", width = "350", height = "240",
-                                h4("Key Figures"),
+                                h4(paste0("Key Figures", " (", format(dates_max, "%B"), " ", format(dates_max, "%Y"), ")")),
                                 HTML(table_changes_meb), br()
                             ),
                             
@@ -438,11 +436,11 @@ ui <- bootstrapPage(
                                 id = "home", class = "panel panel-default", fixed = FALSE, draggable = FALSE,
                                 top = "20", left = "810", right = "auto", bottom = "auto",
                                 width = "427",
-                                h4("Overall Median Item Prices"),
+                                h4(paste0("Overall Median Item Prices", " (", format(dates_max, "%B"), " ", format(dates_max, "%Y"), ")")),
                                 HTML(table_changes), br()
                             ),
                             
-                            absolutePanel(id = "dropdown", top = 47, left = 560, width = 200, fixed=FALSE, draggable = FALSE, height = "auto",
+                            absolutePanel(id = "dropdown", top = 47, left = 750, width = 200, fixed=FALSE, draggable = FALSE, height = "auto",
                                           dropdown(
                                               h4("SMEB contents"),
                                               column(
@@ -460,7 +458,7 @@ ui <- bootstrapPage(
                                                                  "SMEB Guidance Note"), ".")),
                                                      width = 5),
                                               width = "650px",
-                                              tooltip = tooltipOptions(title = "Click to see more details about the SMEB."),
+                                              tooltip = tooltipOptions(title = "Click for more details on the SMEB."),
                                               size = "xs",
                                               up = FALSE,
                                               style = "jelly", icon = icon("info"),
@@ -472,38 +470,38 @@ ui <- bootstrapPage(
                             ),
                                                                                                               # display CWG & REACH logos on bottom left
                             absolutePanel(id = "logo", class = "card", bottom = 15, left = 20, fixed=TRUE, draggable = FALSE, height = "auto",
-                                          tags$a(href='https://www.humanitarianresponse.info/en/operations/iraq/cash-working-group',
+                                          tags$a(href='https://www.humanitarianresponse.info/en/operations/iraq/cash-working-group', target = "_blank",
                                                                   tags$img(src='cwg.jpg', height='30'))),
                             
                             absolutePanel(id = "logo", class = "card", bottom = 15, left = 150, fixed=TRUE, draggable = FALSE, height = "auto",
-                                          tags$a(href='https://www.reach-initiative.org', tags$img(src='reach.jpg', height='30'))),
+                                          tags$a(href='https://www.reach-initiative.org', target = "_blank", tags$img(src='reach.jpg', height='30'))),
                                                                                                               # display partner logos on bottom right
                             absolutePanel(id = "logo", class = "card", bottom = 14, right = 20, fixed=TRUE, draggable = FALSE, height = "auto",
-                                          tags$a(href='https://www.clovekvtisni.cz/en/', tags$img(src='pin.png', height='35'))),
+                                          tags$a(href='https://www.clovekvtisni.cz/en/', target = "_blank", tags$img(src='pin.png', height='35'))),
                             
                             absolutePanel(id = "logo", class = "card", bottom = 14, right = 80, fixed=TRUE, draggable = FALSE, height = "auto",
-                                          tags$a(href='https://www.oxfam.org/en', tags$img(src='oxfam.png', height='35'))),
+                                          tags$a(href='https://www.oxfam.org/en', target = "_blank", tags$img(src='oxfam.png', height='35'))),
                             
                             absolutePanel(id = "logo", class = "card", bottom = 11, right = 130, fixed=TRUE, draggable = FALSE, height = "auto",
-                                          tags$a(href='https://www.nrc.no/', tags$img(src='nrc.png', height='40'))),
+                                          tags$a(href='https://www.nrc.no/', target = "_blank", tags$img(src='nrc.png', height='40'))),
                             
                             absolutePanel(id = "logo", class = "card", bottom = 15, right = 270, fixed=TRUE, draggable = FALSE, height = "auto",
-                                          tags$a(href='https://www.mercycorps.org/', tags$img(src='mercycorps.png', height='35'))),
+                                          tags$a(href='https://www.mercycorps.org/', target = "_blank", tags$img(src='mercycorps.png', height='35'))),
                             
                             absolutePanel(id = "logo", class = "card", bottom = 15, right = 380, fixed=TRUE, draggable = FALSE, height = "auto",
-                                          tags$a(href='https://www.rescue.org/', tags$img(src='irc.png', height='34'))),
+                                          tags$a(href='https://www.rescue.org/', target = "_blank", tags$img(src='irc.png', height='34'))),
                             
                             absolutePanel(id = "logo", class = "card", bottom = 14, right = 430, fixed=TRUE, draggable = FALSE, height = "auto",
-                                          tags$a(href='https://harikar.org/', tags$img(src='harikar.png', height='35'))),
+                                          tags$a(href='https://harikar.org/', target = "_blank", tags$img(src='harikar.png', height='35'))),
                             
                             absolutePanel(id = "logo", class = "card", bottom = 19, right = 480, fixed=TRUE, draggable = FALSE, height = "auto",
-                                          tags$a(href='https://drc.ngo/', tags$img(src='drc.png', height='25'))),
+                                          tags$a(href='https://drc.ngo/', target = "_blank", tags$img(src='drc.png', height='25'))),
                             
                             absolutePanel(id = "logo", class = "card", bottom = 14, right = 560, fixed=TRUE, draggable = FALSE, height = "auto",
-                                          tags$a(href='https://www.care-international.org/', tags$img(src='care.png', height='37'))),
+                                          tags$a(href='https://www.care-international.org/', target = "_blank", tags$img(src='care.png', height='37'))),
                             
                             absolutePanel(id = "logo", class = "card", bottom = 18, right = 610, fixed=TRUE, draggable = FALSE, height = "auto",
-                                          tags$a(href='https://www.acted.org/en/', tags$img(src='acted.png', height='25')))
+                                          tags$a(href='https://www.acted.org/en/', target = "_blank", tags$img(src='acted.png', height='25')))
                         )                                                                                     # close dashboard class 
                ),                                                                                             # close dashboard tabpanel
                
@@ -522,10 +520,19 @@ ui <- bootstrapPage(
                                 pickerInput("plot_aggregation",
                                             label = "Aggregation level:",
                                             choices = c("District", "Governorate", "Country"),
-                                            selected = "District",
+                                            selected = "Country",
                                             multiple = FALSE
                                 ),
-                                
+
+                                conditionalPanel(condition = "input.plot_aggregation == 'Country'",
+                                                 radioGroupButtons("plot_type",
+                                                                   label = "Plot type:",
+                                                                   choices = c("Line Graph", "Boxplot"),
+                                                                   selected = "Line Graph",
+                                                                   justified = TRUE
+                                                 )
+                                ),
+                                                                
                                 hr(),
                                 
                                 conditionalPanel(condition = "input.plot_aggregation == 'District'",
@@ -618,21 +625,34 @@ ui <- bootstrapPage(
                                 
                                 hr(),
                                 
-                                sliderTextInput("select_date",                                                # set date slider
-                                                "Months:",
-                                                force_edges = TRUE,
-                                                choices = dates,
-                                                selected = c(dates_min, dates_max)
+                                conditionalPanel(condition = "input.plot_aggregation != 'Country' | (input.plot_aggregation == 'Country' & input.plot_type == 'Line Graph')",
+                                                 sliderTextInput("select_date",                                                # set date slider
+                                                                 "Months:",
+                                                                 force_edges = TRUE,
+                                                                 choices = dates,
+                                                                 selected = c(dates_min, dates_max)
+                                                 )
                                 ),
                                 
-                                prettySwitch(
-                                    inputId = "select_index",
-                                    label = "Index series", 
-                                    status = "success",
-                                    fill = TRUE
+                                conditionalPanel(condition = "input.plot_aggregation == 'Country' & input.plot_type == 'Boxplot'",
+                                                 sliderTextInput("select_date_boxplot",                                        # set date slider
+                                                                 "Month:",
+                                                                 force_edges = TRUE,
+                                                                 choices = dates,
+                                                                 selected = dates_max
+                                                 )
                                 ),
                                 
-                                conditionalPanel(condition = "input.select_index == true",
+                                conditionalPanel(condition = "input.plot_aggregation != 'Country' | (input.plot_aggregation == 'Country' & input.plot_type == 'Line Graph')",
+                                                 prettySwitch(
+                                                     inputId = "select_index",
+                                                     label = "Index series", 
+                                                     status = "success",
+                                                     fill = TRUE
+                                                 )
+                                ),
+                                
+                                conditionalPanel(condition = "input.select_index == true & (input.plot_aggregation != 'Country' | (input.plot_aggregation == 'Country' & input.plot_type == 'Line Graph'))",
                                                  sliderTextInput("select_date_index",
                                                                  "Reference Month:",
                                                                  force_edges = TRUE,
@@ -664,7 +684,7 @@ ui <- bootstrapPage(
                                                                      "SMEB Guidance Note"), ".")),
                                                          width = 5),
                                                   width = "650px",
-                                                  tooltip = tooltipOptions(title = "Click to see more details about the SMEB."),
+                                                  tooltip = tooltipOptions(title = "Click for more details on the SMEB."),
                                                   size = "xs",
                                                   up = TRUE,
                                                   style = "jelly", icon = icon("info"),
@@ -679,11 +699,21 @@ ui <- bootstrapPage(
                             ),                                                                                # close sidebar panel
                             
                             mainPanel(
-                                tags$i(textOutput("plot_text"), style = "color: red"),                        # display error message displayed if there is no data available
-                                highchartOutput("graph", width = "100%", height = "600px"),                   # display large chart
-                                width = 8                                                                     # set width of main panel (out of 12, as per bootstrap logic)
+                                conditionalPanel(condition = "input.plot_aggregation != 'Country' | (input.plot_aggregation == 'Country' & input.plot_type == 'Line Graph')",
+                                                 br(),
+                                                 tags$i(textOutput("plot_text"), style = "color: red"),                        # display error message displayed if there is no data available
+                                                 highchartOutput("graph", width = "100%", height = "600px"),                   # display large chart
+                                                 width = 8                                                                     # set width of main panel (out of 12, as per bootstrap logic)
+                                ),
+                                
+                                conditionalPanel(condition = "input.plot_aggregation == 'Country' & input.plot_type == 'Boxplot'",
+                                                 br(),
+                                                 highchartOutput("boxplot", width = "100%", height = "600px"),
+                                                 tags$i(h6("The boxplots are built with district medians and illustrate the variation of prices across the country.", style="color:#045a8d; text-align:center"))
+                                )
                             )
-                        )),
+                        )
+               ),
                
                
                #### * 6.3 Map ######################################################################
@@ -701,7 +731,7 @@ ui <- bootstrapPage(
                             
                             absolutePanel(
                                 id = "controls", class = "panel panel-default", fixed = TRUE, draggable = FALSE, top = "130", left = "12", right = "auto", bottom = "auto",
-                                width = 300, height = "auto",
+                                width = 330, height = "auto",
                                 
                                 pickerInput("map_indicator_select",
                                             label = "Indicator:",   
@@ -766,7 +796,7 @@ ui <- bootstrapPage(
                                                                                 "SMEB Guidance Note"), ".")),
                                                                     width = 5),
                                                              width = "650px",
-                                                             tooltip = tooltipOptions(title = "Click to see more details about the SMEB."),
+                                                             tooltip = tooltipOptions(title = "Click for more details on the SMEB."),
                                                              size = "xs",
                                                              up = TRUE,
                                                              style = "jelly", icon = icon("info"),
@@ -881,7 +911,7 @@ ui <- bootstrapPage(
                               on this website. Data collection for the JPMI occurs on a bi-monthly basis with the website being updated after each round.",
                               style="text-align:justify;"),
                             p("For more details on methodology, refer to the ",
-                              tags$a(href="https://www.impact-repository.org/document/reach/7a6169cc/reach_irq_tor_joint_price_monitoring_initiative_jpmi_july_2018_0.pdf",
+                              tags$a(href="https://www.impact-repository.org/document/reach/7a6169cc/reach_irq_tor_joint_price_monitoring_initiative_jpmi_july_2018_0.pdf", target = "_blank",
                                      "JPMI terms of reference (ToR)"), ".",
                               style="text-align:justify;margin-bottom:20px"),
                             h4("Limitations"),
@@ -892,34 +922,34 @@ ui <- bootstrapPage(
                             h4("Contact"),
                             p("In case you have any questions about the JPMI, please contact:", tags$a(href="mailto:casey.clark@reach-initiative.org", "casey.clark@reach-initiative.org")),
                             br(),
-                            tags$a(href='https://www.humanitarianresponse.info/en/operations/iraq/cash-working-group', tags$img(src = "cwg.jpg", height = "40px")), tags$a(href='https://www.reach-initiative.org', tags$img(src = "reach.jpg", height = "40px")),
+                            tags$a(href='https://www.humanitarianresponse.info/en/operations/iraq/cash-working-group', target = "_blank", tags$img(src = "cwg.jpg", height = "40px")), tags$a(href='https://www.reach-initiative.org', target = "_blank", tags$img(src = "reach.jpg", height = "40px")),
                             width=6),
                         
                         column(
                             h4("Current Partners"),
-                            tags$a(href="https://www.acted.org/en/", "ACTED"), br(),
-                            tags$a(href="https://www.care-international.org/", "CARE International"), "/", tags$a(href="https://harikar.org/", "Harikar"), br(),
-                            tags$a(href="https://drc.ngo/", "Danish Refugee Council (DRC)"), br(),
-                            tags$a(href="https://www.rescue.org/", "International Rescue Committee (IRC)"), br(),
-                            tags$a(href="https://www.mercycorps.org/", "Mercy Corps"), br(),
-                            tags$a(href="https://www.nrc.no/", "Norwegian Refugee Council (NRC)"), br(),
-                            tags$a(href="https://www.oxfam.org/en", "Oxfam"), br(),
-                            tags$a(href="https://www.clovekvtisni.cz/en/", "People in Need (PIN)"), br(),
+                            tags$a(href="https://www.acted.org/en/", "ACTED", target = "_blank"), br(),
+                            tags$a(href="https://www.care-international.org/", "CARE International", target = "_blank"), "/", tags$a(href="https://harikar.org/", "Harikar", target = "_blank"), br(),
+                            tags$a(href="https://drc.ngo/", "Danish Refugee Council (DRC)", target = "_blank"), br(),
+                            tags$a(href="https://www.rescue.org/", "International Rescue Committee (IRC)", target = "_blank"), br(),
+                            tags$a(href="https://www.mercycorps.org/", "Mercy Corps", target = "_blank"), br(),
+                            tags$a(href="https://www.nrc.no/", "Norwegian Refugee Council (NRC)", target = "_blank"), br(),
+                            tags$a(href="https://www.oxfam.org/en", "Oxfam", target = "_blank"), br(),
+                            tags$a(href="https://www.clovekvtisni.cz/en/", "People in Need (PIN)", target = "_blank"), br(),
                             br(),
                             h4("Previous Partners"),
-                            tags$a(href="https://www.actioncontrelafaim.org/en/", "Action contre la Faim (ACF)"), br(),
-                            tags$a(href="https://www.drk.de/en/", "German Red Cross (GRC)"), "/", tags$a(href="https://en.ircs.org.iq/", "Iraqi Red Crescent Society (IRCS)"), br(),
-                            tags$a(href="https://www.medair.org/", "Medair"), br(),
-                            tags$a(href="https://www.pah.org.pl/en/", "Polish Humanitarian Action (PAH)"), br(),
-                            tags$a(href="https://www.qandil.org/", "Qandil"), br(),
-                            tags$a(href="https://www.ri.org/", "Relief International (RI)"), br(),
-                            tags$a(href="https://www.savethechildren.net/", "Save the Children"), br(),
-                            tags$a(href="https://www.tearfund.org/", "Tearfund"), br(),
-                            tags$a(href="https://www.tdh.ch/en", "Terre des Hommes (TdH)"), br(),
-                            tags$a(href="https://www.trianglegh.org/index_en.php", "Triangle Génération Humanitaire (TGH)"), br(),
-                            tags$a(href="https://www.unhcr.org/", "UNHCR"), br(),
-                            tags$a(href="https://www.welthungerhilfe.org/", "Welthungerhilfe"), br(),
-                            tags$a(href="https://www.worldvision.org/", "World Vision"), br(),
+                            tags$a(href="https://www.actioncontrelafaim.org/en/", "Action contre la Faim (ACF)", target = "_blank"), br(),
+                            tags$a(href="https://www.drk.de/en/", "German Red Cross (GRC)", target = "_blank"), "/", tags$a(href="https://en.ircs.org.iq/", "Iraqi Red Crescent Society (IRCS)", target = "_blank"), br(),
+                            tags$a(href="https://www.medair.org/", "Medair", target = "_blank"), br(),
+                            tags$a(href="https://www.pah.org.pl/en/", "Polish Humanitarian Action (PAH)", target = "_blank"), br(),
+                            tags$a(href="https://www.qandil.org/", "Qandil", target = "_blank"), br(),
+                            tags$a(href="https://www.ri.org/", "Relief International (RI)", target = "_blank"), br(),
+                            tags$a(href="https://www.savethechildren.net/", "Save the Children", target = "_blank"), br(),
+                            tags$a(href="https://www.tearfund.org/", "Tearfund", target = "_blank"), br(),
+                            tags$a(href="https://www.tdh.ch/en", "Terre des Hommes (TdH)", target = "_blank"), br(),
+                            tags$a(href="https://www.trianglegh.org/index_en.php", "Triangle Génération Humanitaire (TGH)", target = "_blank"), br(),
+                            tags$a(href="https://www.unhcr.org/", "UNHCR", target = "_blank"), br(),
+                            tags$a(href="https://www.welthungerhilfe.org/", "Welthungerhilfe", target = "_blank"), br(),
+                            tags$a(href="https://www.worldvision.org/", "World Vision", target = "_blank"), br(),
                             width=6)
                         ),
 
@@ -936,7 +966,7 @@ ui <- bootstrapPage(
                             
                             absolutePanel(
                                 id = "controls", class = "panel panel-default", fixed = TRUE, draggable = FALSE, top = "130", left = "12", right = "auto", bottom = "auto",
-                                width = 300, height = "auto",
+                                width = 330, height = "auto",
                                 
                                 pickerInput("jram_partner_select",
                                             label = "Partners:",   
@@ -961,7 +991,7 @@ ui <- bootstrapPage(
                                 actionButton("jram_reset", "Reset filters")
                             ),
                             
-                            absolutePanel(top = 50, left = 55, fixed=TRUE, draggable = FALSE, height = "auto",
+                            absolutePanel(top = 50, left = 55, fixed=TRUE, draggable = FALSE, height = "auto", width = 180,
                                           dropdown(
                                               h4("Introduction"),
                                               p("The Joint Rapid Assessment of Markets (JRAM) was developed and launched by the Cash Working Group of
@@ -973,18 +1003,18 @@ ui <- bootstrapPage(
                                                 to the status of infrastructure, security, and suppliers; the prices and availability of key goods; and
                                                 the response capacity of traders. The data collected are then used to determine if cash and market-based
                                                 programming are appropriate intervention mechanisms. This dashboard presents the locations and lead
-                                                partners for JRAMs conducted since August 2017.", style="text-align: justify;"),
+                                                partners for JRAMs conducted since August 2017.", style="text-align: justify;margin-bottom:20px"),
                                               h4("Methodology"),
                                               p("The JRAM uses a qualitative approach based on the Rapid Assessment of Markets (RAM) system developed by
                                                 the International Committee of the Red Cross (ICRC). The populations of interest are market actors in the
                                                 selected area, including wholesalers, retailers, and consumers. CWG partners identify relevant markets
                                                 for assessment based on operational relevance and feasibility. Partners use purposive sampling to identify
                                                 respondents from each of the three groups, and undertake field data collection using an ODK-based
-                                                questionnaire. Partners then clean and analyse data using tools and guidance developed by REACH.", style="text-align: justify;"),
+                                                questionnaire. Partners then clean and analyse data using tools and guidance developed by REACH.", style="text-align: justify;margin-bottom:20px"),
                                               h4("Limitations"),
                                               p("Due to the qualitative nature of the JRAM, findings are indicative only and cannot be statistically
                                               generalised to the assessed area. Findings are also relevant only to the specified markets and should not
-                                              be regarded as indicative of market functionality elsewhere in Iraq.", style="text-align: justify;"),
+                                              be regarded as indicative of market functionality elsewhere in Iraq.", style="text-align: justify;margin-bottom:20px"),
                                               h4("Disclaimer"),
                                               p("All responsibility for data quality, analysis, interpretation, and outputs lies with the implementing
                                                 partner who led the JRAM. REACH does not validate partner data, analysis, or findings. Providing links
@@ -993,7 +1023,7 @@ ui <- bootstrapPage(
                                               #size = "sm",
                                               up = FALSE,
                                               style = "jelly", icon = icon("info"),
-                                              tooltip = tooltipOptions(placement = "right", title = "Click to see more information about the JRAM."),
+                                              tooltip = tooltipOptions(placement = "right", title = "Click for more details on the JRAM."),
                                               animate = animateOptions(
                                                   enter = "fadeInLeft",
                                                   exit = "fadeOutLeft",
@@ -1012,11 +1042,8 @@ server <- function(input, output, session) {
     #### 7.1 Home ######################################################################
     
     output$map_home <- renderLeaflet({
-        map_home <- leaflet(options = leafletOptions(attributionControl=FALSE, zoomControl = FALSE, minZoom = 12, maxZoom = 12)) %>%
-            setMaxBounds(lng1 = 44.379140,
-                         lat1 = 33.315743,
-                         lng2 = 44.379140,
-                         lat2 = 33.315743) %>%
+        map_home <- leaflet(options = leafletOptions(attributionControl=FALSE, zoomControl = FALSE, dragging = FALSE, minZoom = 12, maxZoom = 12)) %>%
+            setView(lng = 44.379140, lat = 33.315743, zoom = 12) %>%
             addProviderTiles(providers$CartoDB.PositronNoLabels, group = "CartoDB",
                              options = providerTileOptions(opacity = 0.8))
     })
@@ -1047,27 +1074,40 @@ server <- function(input, output, session) {
     
     plot_datasetInput <- reactive({prices_long %>%
             filter(
-                is.null(plot_item_select()) | Item %in% plot_item_select(),
-                Date >= input$select_date[1] & Date <= input$select_date[2]
+                is.null(plot_item_select()) | Item %in% plot_item_select()
+            ) %>%
+            execute_if(input$plot_type == 'Line Graph' | input$plot_aggregation != 'Country',
+                       filter(
+                           Date >= input$select_date[1] & Date <= input$select_date[2]
+                       )
+            ) %>%
+            execute_if(input$plot_type == 'Boxplot' & input$plot_aggregation == 'Country',
+                       filter(
+                           Date == input$select_date_boxplot
+                       )
             ) %>%
             execute_if(input$plot_aggregation == 'District', filter(is.null(plot_district_select()) | District %in% plot_district_select())) %>%
             execute_if(input$plot_aggregation == 'Governorate', select(-District)) %>%
             execute_if(input$plot_aggregation == 'Governorate', group_by(Date, Governorate, Item)) %>%
             execute_if(input$plot_aggregation == 'Governorate', summarise_all(median, na.rm = TRUE)) %>%
             execute_if(input$plot_aggregation == 'Governorate', filter(is.null(plot_governorate_select()) | Governorate %in% plot_governorate_select())) %>%
-            execute_if(input$plot_aggregation == 'Country', select(-Governorate, -District)) %>%
-            execute_if(input$plot_aggregation == 'Country', group_by(Date, Item)) %>%
-            execute_if(input$plot_aggregation == 'Country', summarise_all(median, na.rm = TRUE)) %>%
-            execute_if(input$select_index == 'TRUE' & input$plot_aggregation == 'District', group_by(Governorate, District, Item)) %>%
-            execute_if(input$select_index == 'TRUE' & input$plot_aggregation == 'Governorate', group_by(Governorate, Item)) %>%
-            execute_if(input$select_index == 'TRUE' & input$plot_aggregation == 'Country', group_by(Item)) %>%
-            execute_if(input$select_index == 'TRUE', mutate(Price = round(((Price / c(Price[Date == input$select_date_index], NA)[1])-1)*100, digits = 1))) %>%
+            execute_if(input$plot_type == 'Line Graph' & input$plot_aggregation == 'Country', select(-Governorate, -District)) %>%
+            execute_if(input$plot_type == 'Line Graph' & input$plot_aggregation == 'Country', group_by(Date, Item)) %>%
+            execute_if(input$plot_type == 'Line Graph' & input$plot_aggregation == 'Country', summarise_all(median, na.rm = TRUE)) %>%
+            execute_if(((input$plot_type == 'Line Graph' & input$plot_aggregation == 'Country') | input$plot_aggregation != 'Country') & input$select_index == 'TRUE' & input$plot_aggregation == 'District',
+                       group_by(Governorate, District, Item)) %>%
+            execute_if(((input$plot_type == 'Line Graph' & input$plot_aggregation == 'Country') | input$plot_aggregation != 'Country') & input$select_index == 'TRUE' & input$plot_aggregation == 'Governorate',
+                       group_by(Governorate, Item)) %>%
+            execute_if(((input$plot_type == 'Line Graph' & input$plot_aggregation == 'Country') | input$plot_aggregation != 'Country') & input$select_index == 'TRUE' & input$plot_aggregation == 'Country',
+                       group_by(Item)) %>%
+            execute_if(((input$plot_type == 'Line Graph' & input$plot_aggregation == 'Country') | input$plot_aggregation != 'Country') & input$select_index == 'TRUE',
+                       mutate(Price = round(((Price / c(Price[Date == input$select_date_index], NA)[1])-1)*100, digits = 1))) %>%
             filter(!is.na(Price))
     })
     
     output$plot_text <- renderText({
         if (nrow(plot_datasetInput()) == 0) {
-            "There is no data for this selection. Change the time frame or select another indicator."} else {""}
+            "There is no data for this selection. Change the time frame or select another indicator/location."} else {""}
     })
     
     output$graph <- renderHighchart({
@@ -1084,10 +1124,9 @@ server <- function(input, output, session) {
         graph <- graph %>%
             hc_xAxis(title = "") %>%
             hc_colors(cols) %>%
-            #hc_tooltip(formatter = JS("Highcharts.setOptions({ lang: { thousandsSep: ',' } });"))
             hc_exporting(
                 enabled = TRUE,
-                filename = paste0("IRQ-JPMI-plot_export-", Sys.Date()),
+                filename = paste0("IRQ-JPMI-linegraph_export-", Sys.Date()),
                 buttons = list(
                     contextButton = list(
                         menuItems = list("downloadPNG", "downloadPDF", "downloadCSV")
@@ -1112,6 +1151,39 @@ server <- function(input, output, session) {
             )
     })
     
+    
+    output$boxplot <- renderHighchart({
+        
+        boxplot <- hcboxplot(x = plot_datasetInput()$Price, var = plot_datasetInput()$Item, outliers = FALSE) %>%
+            hc_chart(type = "column") %>%
+            hc_tooltip(valueSuffix = " IQD") %>%
+            hc_yAxis(min = 0, title = list(text = "Price (in IQD)")) %>%
+            hc_exporting(
+                enabled = TRUE,
+                filename = paste0("IRQ-JPMI-boxplot_export-", Sys.Date()),
+                buttons = list(
+                    contextButton = list(
+                        menuItems = list("downloadPNG", "downloadPDF", "downloadCSV")
+                    )),
+                sourceWidth = 1000,
+                sourceHeight = 600
+            ) %>%
+            hc_plotOptions(boxplot = list(fillColor = "#e9e9e9",
+                                          lineWidth = 1,
+                                          lineColor = "#5c5c5c",
+                                          medianWidth = 2,
+                                          medianColor = "#d9230f",
+                                          stemColor = "#5c5c5c",
+                                          stemWidth = 1,
+                                          whiskerColor = "#5c5c5c",
+                                          whiskerLength = "0%",
+                                          whiskerWidth = 1
+                                          ),
+                           series = list(dataSorting = list(enabled = TRUE, sortKey = "median"))
+                           )
+
+    })
+
     
     #### 7.3 Map ######################################################################
     
