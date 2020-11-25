@@ -689,16 +689,12 @@ ui <- bootstrapPage(
                             ),                                                                                # close sidebar panel
                             
                             mainPanel(
-                                conditionalPanel(condition = "input.plot_aggregation != 'Country' | (input.plot_aggregation == 'Country' & input.plot_type == 'Line Graph')",
                                                  br(),
                                                  tags$i(textOutput("plot_text"), style = "color: red"),                        # display error message displayed if there is no data available
                                                  highchartOutput("graph", width = "100%", height = "600px"),                   # display large chart
-                                                 width = 8                                                                     # set width of main panel (out of 12, as per bootstrap logic)
-                                ),
+                                                 width = 8,                                                                    # set width of main panel (out of 12, as per bootstrap logic)
                                 
                                 conditionalPanel(condition = "input.plot_aggregation == 'Country' & input.plot_type == 'Boxplot'",
-                                                 br(),
-                                                 highchartOutput("boxplot", width = "100%", height = "600px"),
                                                  tags$i(h6("The boxplots are built with district medians and illustrate the variation of prices across the country.", style="color:#045a8d; text-align:center"))
                                 )
                             )
@@ -1102,7 +1098,38 @@ server <- function(input, output, session) {
     
     output$graph <- renderHighchart({
         
-        if (input$plot_aggregation == "Country" | (input$plot_aggregation == "District" & input$plot_by_district_item == "Item") | (input$plot_aggregation == "Governorate" & input$plot_by_governorate_item == "Item")) {
+        if (input$plot_aggregation == "Country" & input$plot_type == "Boxplot") {
+            
+            graph <- hcboxplot(x = plot_datasetInput()$Price, var = plot_datasetInput()$Item, outliers = FALSE) %>%
+                hc_chart(type = "column") %>%
+                hc_tooltip(valueSuffix = " IQD") %>%
+                hc_yAxis(min = 0, title = list(text = "Price (in IQD)")) %>%
+                hc_exporting(
+                    enabled = TRUE,
+                    filename = paste0("IRQ-JPMI-boxplot_export-", Sys.Date()),
+                    buttons = list(
+                        contextButton = list(
+                            menuItems = list("downloadPNG", "downloadPDF", "downloadCSV")
+                        )),
+                    sourceWidth = 1000,
+                    sourceHeight = 600
+                ) %>%
+                hc_plotOptions(boxplot = list(fillColor = "#e9e9e9",
+                                              lineWidth = 1,
+                                              lineColor = "#5c5c5c",
+                                              medianWidth = 2,
+                                              medianColor = "#d9230f",
+                                              stemColor = "#5c5c5c",
+                                              stemWidth = 1,
+                                              whiskerColor = "#5c5c5c",
+                                              whiskerLength = "0%",
+                                              whiskerWidth = 1
+                ),
+                series = list(dataSorting = list(enabled = TRUE, sortKey = "median"))
+                )
+            
+            
+        } else if (input$plot_aggregation == "Country" | (input$plot_aggregation == "District" & input$plot_by_district_item == "Item") | (input$plot_aggregation == "Governorate" & input$plot_by_governorate_item == "Item")) {
             graph <- hchart(plot_datasetInput(), "line", hcaes(x = Date, y = Price, group = Item))
             
         } else if (input$plot_aggregation == "District"){
@@ -1141,40 +1168,7 @@ server <- function(input, output, session) {
             )
     })
     
-    
-    output$boxplot <- renderHighchart({
-        
-        boxplot <- hcboxplot(x = plot_datasetInput()$Price, var = plot_datasetInput()$Item, outliers = FALSE) %>%
-            hc_chart(type = "column") %>%
-            hc_tooltip(valueSuffix = " IQD") %>%
-            hc_yAxis(min = 0, title = list(text = "Price (in IQD)")) %>%
-            hc_exporting(
-                enabled = TRUE,
-                filename = paste0("IRQ-JPMI-boxplot_export-", Sys.Date()),
-                buttons = list(
-                    contextButton = list(
-                        menuItems = list("downloadPNG", "downloadPDF", "downloadCSV")
-                    )),
-                sourceWidth = 1000,
-                sourceHeight = 600
-            ) %>%
-            hc_plotOptions(boxplot = list(fillColor = "#e9e9e9",
-                                          lineWidth = 1,
-                                          lineColor = "#5c5c5c",
-                                          medianWidth = 2,
-                                          medianColor = "#d9230f",
-                                          stemColor = "#5c5c5c",
-                                          stemWidth = 1,
-                                          whiskerColor = "#5c5c5c",
-                                          whiskerLength = "0%",
-                                          whiskerWidth = 1
-                                          ),
-                           series = list(dataSorting = list(enabled = TRUE, sortKey = "median"))
-                           )
 
-    })
-
-    
     #### 7.3 Map ######################################################################
     
     map_indicator_select <- reactive({
