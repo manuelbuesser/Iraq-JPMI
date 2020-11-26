@@ -929,7 +929,7 @@ ui <- bootstrapPage(
                             tags$a(href="https://www.oxfam.org/en", "Oxfam", target = "_blank"), br(),
                             tags$a(href="https://www.clovekvtisni.cz/en/", "People in Need (PIN)", target = "_blank"), br(),
                             br(),
-                            h4("Previous Partners"),
+                            h4("Former Partners"),
                             tags$a(href="https://www.actioncontrelafaim.org/en/", "Action contre la Faim (ACF)", target = "_blank"), br(),
                             tags$a(href="https://www.drk.de/en/", "German Red Cross (GRC)", target = "_blank"), "/", tags$a(href="https://en.ircs.org.iq/", "Iraqi Red Crescent Society (IRCS)", target = "_blank"), br(),
                             tags$a(href="https://www.medair.org/", "Medair", target = "_blank"), br(),
