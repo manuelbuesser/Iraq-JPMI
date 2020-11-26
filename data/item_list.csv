@@ -1,35 +1,39 @@
 Item,Group
-Bulgur (1 kg),I. Food items
-Lentils (1 kg),I. Food items
-Rice (1 kg),I. Food items
-Salt (1 kg),I. Food items
-Sugar (1 kg),I. Food items
-Vegetable oil (1 L),I. Food items
-Wheat flour (1 kg),I. Food items
-Bottled water (1 L),II. Water
-Water trucking (500 L),II. Water
-Bath soap (125 g),III. Non-food items
-Detergent (1 kg),III. Non-food items
-Disinfectant solution (1 kg),III. Non-food items
-Garbage bags (20 units),III. Non-food items
-Sanitary napkins (1 unit),III. Non-food items
-Shampoo (500 ml),III. Non-food items
-Toothbrush (1 unit),III. Non-food items
-Toothpaste (75 ml),III. Non-food items
-US dollars,IV. Currencies
-SMEB,V. Indices
-SMEB food,V. Indices
-SMEB NFI,V. Indices
-SMEB water,V. Indices
-Butane (1 canister),VI. Discontinued items
-Chicken (1 kg),VI. Discontinued items
-Chickpeas (1 kg),VI. Discontinued items
-Comb (1 unit),VI. Discontinued items
-Dry milk (500 g),VI. Discontinued items
-Eggs (30 units),VI. Discontinued items
-Kerosene (1 L),VI. Discontinued items
-Nail clippers (1 unit),VI. Discontinued items
-Onions (1 kg),VI. Discontinued items
-Tea (500 g),VI. Discontinued items
-Towel (1 unit),VI. Discontinued items
-White beans (1 kg),VI. Discontinued items
+SMEB,I. Indices
+SMEB food,I. Indices
+SMEB NFI,I. Indices
+SMEB water,I. Indices
+SMEB (pre-2020),II. Indices (pre-2020)
+SMEB food (pre-2020),II. Indices (pre-2020)
+SMEB NFI (pre-2020),II. Indices (pre-2020)
+SMEB fuel (pre-2020),II. Indices (pre-2020)
+Bulgur (1 kg),III. Food items
+Lentils (1 kg),III. Food items
+Rice (1 kg),III. Food items
+Salt (1 kg),III. Food items
+Sugar (1 kg),III. Food items
+Vegetable oil (1 L),III. Food items
+Wheat flour (1 kg),III. Food items
+Bottled water (1 L),IV. Water
+Water trucking (500 L),IV. Water
+Bath soap (125 g),V. Non-food items
+Detergent (1 kg),V. Non-food items
+Disinfectant solution (1 L),V. Non-food items
+Garbage bags (20 units),V. Non-food items
+Sanitary napkins (1 unit),V. Non-food items
+Shampoo (500 ml),V. Non-food items
+Toothbrush (1 unit),V. Non-food items
+Toothpaste (75 ml),V. Non-food items
+US dollars (1 USD),VI. Currencies
+Butane (1 canister),VII. Discontinued items
+Chicken (1 kg),VII. Discontinued items
+Chickpeas (1 kg),VII. Discontinued items
+Comb (1 unit),VII. Discontinued items
+Dry milk (500 g),VII. Discontinued items
+Eggs (30 units),VII. Discontinued items
+Kerosene (1 L),VII. Discontinued items
+Nail clippers (1 unit),VII. Discontinued items
+Onions (1 kg),VII. Discontinued items
+Tea (500 g),VII. Discontinued items
+Towel (1 unit),VII. Discontinued items
+White beans (1 kg),VII. Discontinued items
