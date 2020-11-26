@@ -6,8 +6,8 @@ div.dashboard {
   bottom: 0;
   overflow: hidden;
   padding: 0;
-  min-width: 1260px;
-  min-height: 730px;
+  min-width: 1210px;
+  min-height: 720px;
 }
 
 div.outer {
@@ -30,17 +30,9 @@ div.outer {
 #controls {
   background-color: white;
   cursor: move;
-  opacity: 0.4;
-  transition: opacity 300ms;
+  opacity: 0.9;
   padding: 20px 20px 20px 20px;
 }
-
-
-#controls:hover {
-  opacity: 0.9;
-  transition-delay: 0;
-}
-
 
 #logo {
   background-color: transparent;

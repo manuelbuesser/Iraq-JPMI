@@ -262,10 +262,10 @@ prices_changes <- prices_country_long %>%                                       
            "Yearly change" = change2)
 
 prices_changes_items <- prices_changes %>%
-    filter(!str_detect(Item, "^SMEB"))
+    filter(!(str_detect(Item, "^SMEB") | Item == "US dollars (1 USD)"))
 
 prices_changes_meb <- prices_changes %>%
-    filter(str_detect(Item, "^SMEB")) %>%
+    filter(str_detect(Item, "^SMEB") | str_detect(Item, "^US dollars")) %>%
     arrange(Item)
 
 data_latest <- data %>%                                                                                   # latest dataset for download on dashboard page
@@ -314,9 +314,10 @@ smeb_kbl <- smeb %>%                                                            
 table_changes_meb <- prices_changes_meb %>%                                                               # style key figures table
         kbl(escape = F, format.args = list(big.mark = ","), align = "lrrr") %>%
         kable_styling(bootstrap_options = c("striped", "hover", "condensed"), fixed_thead = T, full_width = F) %>%
-        column_spec(1, width = "7em") %>%
+        column_spec(1, width = "10em") %>%
         column_spec(3, color = ifelse(grepl('^\\+', prices_changes_meb$'Bi-monthly change'), "red", ifelse(grepl('^\\-', prices_changes_meb$'Bi-monthly change'), "green", "auto"))) %>%
-        column_spec(4, color = ifelse(grepl('^\\+', prices_changes_meb$'Yearly change'), "red", ifelse(grepl('^\\-', prices_changes_meb$'Yearly change'), "green", "auto")))
+        column_spec(4, color = ifelse(grepl('^\\+', prices_changes_meb$'Yearly change'), "red", ifelse(grepl('^\\-', prices_changes_meb$'Yearly change'), "green", "auto"))) %>%
+        row_spec(0:5, extra_css = "font-size: 11px; 18px;")
     
 
 month_collected      <- paste0(format(dates_max, "%B"), " ",format(dates_max, "%Y"))                      # define overview of last round
@@ -331,16 +332,22 @@ table_round <- overview_round %>%                                               
     kbl(escape = F, format.args = list(big.mark = ","), align = "lr", col.names = NULL) %>%
     column_spec(1, width = "12em") %>%
     kable_styling(bootstrap_options = c("striped", "hover", "condensed"), fixed_thead = T, full_width = T) %>%
-    row_spec(1, extra_css = "border-top: 2px solid gainsboro")
+    row_spec(1, extra_css = "font-size: 11.5px; border-top: 2px solid gainsboro") %>%
+    row_spec(2:4, extra_css = "font-size: 11.5px;")
 
 
 table_changes <- prices_changes_items %>%                                                                 # style item table
     kbl(escape = F, format.args = list(big.mark = ","), align = "lrrr") %>%
     kable_styling(bootstrap_options = c("striped", "hover", "condensed"), fixed_thead = T, full_width = F) %>%
-    column_spec(1, width = "13em") %>%
+    column_spec(1, width = "14.5em") %>%
     column_spec(3, color = ifelse(grepl('^\\+', prices_changes_items$'Bi-monthly change'), "red", ifelse(grepl('^\\-', prices_changes_items$'Bi-monthly change'), "green", "auto"))) %>%
     column_spec(4, color = ifelse(grepl('^\\+', prices_changes_items$'Yearly change'), "red", ifelse(grepl('^\\-', prices_changes_items$'Yearly change'), "green", "auto"))) %>%
-    row_spec(c(7, 9, 17), extra_css = "border-bottom: 2px solid gainsboro")
+    pack_rows("Food Items", 1, 7, label_row_css = "background-color: #efefef; font-size: 11px; height: 18px") %>%
+    pack_rows("Water", 8, 9, label_row_css = "background-color: #efefef; font-size: 11px; height: 18px; border-top: 2px solid gainsboro") %>%
+    pack_rows("Non-Food Items", 10, 17, label_row_css = "background-color: #efefef; font-size: 11px; height: 18px; border-top: 2px solid gainsboro") %>%
+    row_spec(0:17, extra_css = "font-size: 11px;")
+#%>%
+    #row_spec(c(7, 9, 17), extra_css = "border-bottom: 2px solid gainsboro")
 
 
 #### 6 UI ######################################################################
@@ -363,7 +370,7 @@ ui <- bootstrapPage(
                             
                             absolutePanel(                                                                    # define introduction box
                                 id = "home", class = "panel panel-default", fixed = FALSE, draggable = FALSE,
-                                top = "20", left = "20", right = "auto", bottom = "auto", width = "400", height = "auto",
+                                top = "20", left = "20", right = "auto", bottom = "auto", width = "400", height = 350,
                                 h4("Introduction"),
                                 p("The Joint Price Monitoring Initiative (JPMI) is a bi-monthly data collection exercise launched by the Iraq Cash Working Group (CWG)
                                   in November 2016. The initiative aims to inform cash-based interventions in Iraq by providing indicative information on key commodities
@@ -381,7 +388,7 @@ ui <- bootstrapPage(
                             
                             absolutePanel(                                                                    # define chart box
                                 id = "home", class = "panel panel-default", fixed = FALSE, draggable = FALSE,
-                                top = "393", left = "20", right = "auto", bottom = "auto", width = "400", height = "auto",
+                                top = "390", left = "20", right = "auto", bottom = "auto", width = "400", height = "270",
                                 hchart(prices_country_home, "line",                                           # define chart
                                        hcaes(x = Date, y = Price, group = Item)) %>%
                                     hc_yAxis(min = 0, title = list(text = "")) %>%
@@ -399,21 +406,21 @@ ui <- bootstrapPage(
                             
                             absolutePanel(
                                 id = "home", class = "panel panel-default", fixed = FALSE, draggable = FALSE,
-                                top = "20", left = "440", right = "auto", bottom = "auto", width = "350", height = "240",
-                                h4(paste0("Key Figures", " (", format(dates_max, "%B"), " ", format(dates_max, "%Y"), ")")),
+                                top = "20", left = "440", right = "auto", bottom = "auto", width = "340", height = "250",
+                                h4(paste0("Key Figures", " (", format(dates_max, "%b"), " ", format(dates_max, "%Y"), ")")),
                                 HTML(table_changes_meb), br()
                             ),
                             
                             absolutePanel(
                                 id = "home", class = "panel panel-default", fixed = FALSE, draggable = FALSE,
-                                top = "280", left = "440", right = "auto", bottom = "auto", width = "350", height = "195",
+                                top = "290", left = "440", right = "auto", bottom = "auto", width = "340", height = "180",
                                 h4("Latest Round"),
                                 HTML(table_round), br()
                             ),
                             
                             absolutePanel(
                                 id = "home", class = "panel panel-default", fixed = FALSE, draggable = FALSE,
-                                top = "495", left = "440", right = "auto", bottom = "auto", width = "350", height = "173",
+                                top = "490", left = "440", right = "auto", bottom = "auto", width = "340", height = "170",
                                 h4("Data Download"),
                                 "Visit the Data Explorer or download the full dataset from the latest round here:",
                                 br(), br(),
@@ -424,13 +431,13 @@ ui <- bootstrapPage(
                             
                             absolutePanel(
                                 id = "home", class = "panel panel-default", fixed = FALSE, draggable = FALSE,
-                                top = "20", left = "810", right = "auto", bottom = "auto",
-                                width = "427",
-                                h4(paste0("Overall Median Item Prices", " (", format(dates_max, "%B"), " ", format(dates_max, "%Y"), ")")),
+                                top = "20", left = "800", right = "auto", bottom = "auto",
+                                width = "390", height = "640",
+                                h4(paste0("Overall Median Item Prices", " (", format(dates_max, "%b"), " ", format(dates_max, "%Y"), ")")),
                                 HTML(table_changes), br()
                             ),
                             
-                            absolutePanel(id = "dropdown", top = 47, left = 750, width = 200, fixed=FALSE, draggable = FALSE, height = "auto",
+                            absolutePanel(id = "dropdown", top = 47, left = 740, width = 200, fixed=FALSE, draggable = FALSE, height = "auto",
                                           dropdown(
                                               h4("SMEB contents"),
                                               column(
@@ -1126,7 +1133,12 @@ server <- function(input, output, session) {
                                               whiskerWidth = 1
                 ),
                 series = list(dataSorting = list(enabled = TRUE, sortKey = "median"))
-                )
+                ) %>%
+                hc_tooltip(pointFormat = "Max: {point.high}<br>
+                                          Q3:\u00a0\u00a0 {point.q3}<br>
+                                          <b>Med: {point.median}</b><br>
+                                          Q1:\u00a0\u00a0 {point.q1}<br>
+                                          Min: {point.low}<br>")
             
             
         } else if (input$plot_aggregation == "Country" | (input$plot_aggregation == "District" & input$plot_by_district_item == "Item") | (input$plot_aggregation == "Governorate" & input$plot_by_governorate_item == "Item")) {
