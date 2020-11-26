@@ -343,8 +343,8 @@ table_changes <- prices_changes_items %>%                                       
     column_spec(3, color = ifelse(grepl('^\\+', prices_changes_items$'Bi-monthly change'), "red", ifelse(grepl('^\\-', prices_changes_items$'Bi-monthly change'), "green", "auto"))) %>%
     column_spec(4, color = ifelse(grepl('^\\+', prices_changes_items$'Yearly change'), "red", ifelse(grepl('^\\-', prices_changes_items$'Yearly change'), "green", "auto"))) %>%
     pack_rows("Food Items", 1, 7, label_row_css = "background-color: #efefef; font-size: 11px; height: 18px") %>%
-    pack_rows("Water", 8, 9, label_row_css = "background-color: #efefef; font-size: 11px; height: 18px; border-top: 2px solid gainsboro") %>%
-    pack_rows("Non-Food Items", 10, 17, label_row_css = "background-color: #efefef; font-size: 11px; height: 18px; border-top: 2px solid gainsboro") %>%
+    pack_rows("Non-Food Items", 8, 15, label_row_css = "background-color: #efefef; font-size: 11px; height: 18px; border-top: 2px solid gainsboro") %>%
+    pack_rows("Water", 16, 17, label_row_css = "background-color: #efefef; font-size: 11px; height: 18px; border-top: 2px solid gainsboro") %>%
     row_spec(0:17, extra_css = "font-size: 11px;")
 #%>%
     #row_spec(c(7, 9, 17), extra_css = "border-bottom: 2px solid gainsboro")
