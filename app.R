@@ -45,21 +45,21 @@ prices <- data %>%
     setNames(gsub("_price","",names(.))) %>%                                            # rename columns names
     ungroup() %>%
     group_by(date) %>%            
-    mutate(water_trucking2 = ifelse(is.na(water_trucking),                               # impute missing water trucking values
+    mutate(water_trucking2 = ifelse(is.na(water_trucking),                              # impute missing water trucking values
                                    water/(1- median( water_trucking/(water+water_trucking), na.rm=TRUE )),
                                    water_trucking),
-           SMEB_food  = 10*lentils + 15*rice + 5*sugar + 0.75*salt + 5*bulgur +         # calculate SMEB values
-                        4.55*vegetable_oil + 30*wheat_flour,
-           SMEB_nfi   = 6*bath_soap + 6*toothbrush + 1*toothpaste + 1*shampoo +
-                        32*sanitary_napkins + 1*plastic_garbage_bags + 1*detergent,
-           SMEB_water = 3*water + 47/500*water_trucking2,
-           SMEB       = SMEB_food + SMEB_nfi + SMEB_water,
-           SMEB_food_old  = 10.8*lentils + 40.5*rice + 5.94*sugar +         # calculate SMEB values
-               5.94*vegetable_oil + 40.5*wheat_flour,
-           SMEB_nfi_old   = 8*bath_soap + 4*toothbrush + 2*toothpaste + 2*shampoo + 1*disinfectant_solution +
-               20*sanitary_napkins + 1*plastic_garbage_bags,
+           SMEB_food     = 10*lentils + 15*rice + 5*sugar + 0.75*salt + 5*bulgur +      # calculate SMEB values
+                           4.55*vegetable_oil + 30*wheat_flour,
+           SMEB_nfi      = 6*bath_soap + 6*toothbrush + 1*toothpaste + 1*shampoo +
+                           32*sanitary_napkins + 1*plastic_garbage_bags + 1*detergent,
+           SMEB_water    = 3*water + 47/500*water_trucking2,
+           SMEB          = SMEB_food + SMEB_nfi + SMEB_water,
+           SMEB_food_old = 10.8*lentils + 40.5*rice + 5.94*sugar +                      # calculate SMEB values
+                           5.94*vegetable_oil + 40.5*wheat_flour,
+           SMEB_nfi_old  = 8*bath_soap + 4*toothbrush + 2*toothpaste + 2*shampoo + 1*disinfectant_solution +
+                           20*sanitary_napkins + 1*plastic_garbage_bags,
            SMEB_fuel_old = 1*butane + 16.67*kerosene,
-           SMEB_old       = SMEB_food_old + SMEB_nfi_old + ifelse(date < "2018-08-01", SMEB_fuel_old, SMEB_water),
+           SMEB_old      = SMEB_food_old + SMEB_nfi_old + ifelse(date < "2018-08-01", SMEB_fuel_old, SMEB_water),
            exchange_rate = exchange_rate / 100                                          # divide exchange rate by 100 since we ask for the price of 100 USD
     ) %>%
     select(-water_trucking2) %>%
@@ -69,48 +69,47 @@ prices <- data %>%
            SMEB_food_old = ifelse(date <  "2020-01-01", SMEB_food_old, NA),
            SMEB_nfi      = ifelse(date >= "2020-01-01", SMEB_nfi, NA),
            SMEB_nfi_old  = ifelse(date <  "2020-01-01", SMEB_nfi_old, NA),
-           #SMEB_water    = ifelse(date >= "2020-01-01", SMEB_water, NA),
            SMEB_fuel_old = ifelse(date <  "2020-01-01", SMEB_fuel_old, NA)) %>%
     mutate_if(is.numeric, round, 0) %>%                                                 # round values
     rename(Date = date, Governorate = governorate, District = district,                 # rename column names 
-           "SMEB" = SMEB,
-           "SMEB food" = SMEB_food,
-           "SMEB NFI" = SMEB_nfi,
-           "SMEB water" = SMEB_water,
-           "SMEB (pre-2020)" = SMEB_old,
+           "SMEB"                 = SMEB,
+           "SMEB food"            = SMEB_food,
+           "SMEB NFI"             = SMEB_nfi,
+           "SMEB water"           = SMEB_water,
+           "SMEB (pre-2020)"      = SMEB_old,
            "SMEB food (pre-2020)" = SMEB_food_old,
-           "SMEB NFI (pre-2020)" = SMEB_nfi_old,
+           "SMEB NFI (pre-2020)"  = SMEB_nfi_old,
            "SMEB fuel (pre-2020)" = SMEB_fuel_old,
-           "Lentils (1 kg)"      = lentils,
-           "Rice (1 kg)"         = rice,
-           "Sugar (1 kg)"        = sugar,
-           "Salt (1 kg)"         = salt,
-           "Bulgur (1 kg)"       = bulgur,
-           "Vegetable oil (1 L)" = vegetable_oil,
-           "Wheat flour (1 kg)"  = wheat_flour,
+           "Lentils (1 kg)"       = lentils,
+           "Rice (1 kg)"          = rice,
+           "Sugar (1 kg)"         = sugar,
+           "Salt (1 kg)"          = salt,
+           "Bulgur (1 kg)"        = bulgur,
+           "Vegetable oil (1 L)"  = vegetable_oil,
+           "Wheat flour (1 kg)"   = wheat_flour,
            "Bath soap (125 g)"    = bath_soap,
-           "Toothbrush (1 unit)" = toothbrush,
-           "Toothpaste (75 ml)"  = toothpaste,
-           "Shampoo (500 ml)"    = shampoo,
-           "Sanitary napkins (1 unit)" = sanitary_napkins,
-           "Garbage bags (20 units)" = plastic_garbage_bags,
-           "Detergent (1 kg)"       = detergent,
+           "Toothbrush (1 unit)"  = toothbrush,
+           "Toothpaste (75 ml)"   = toothpaste,
+           "Shampoo (500 ml)"     = shampoo,
+           "Sanitary napkins (1 unit)"   = sanitary_napkins,
+           "Garbage bags (20 units)"     = plastic_garbage_bags,
+           "Detergent (1 kg)"            = detergent,
            "Disinfectant solution (1 L)" = disinfectant_solution,
-           "Bottled water (1 L)"    = water,
-           "Water trucking (500 L)" = water_trucking,
-           "Butane (1 canister)" = butane,
-           "Chicken (1 kg)" = chicken,
-           "Chickpeas (1 kg)" = chickpeas,
-           "Comb (1 unit)" = comb,
-           "Dry milk (500 g)" = dry_milk,
-           "Eggs (30 units)" = eggs,
-           "Kerosene (1 L)" = kerosene,
+           "Bottled water (1 L)"         = water,
+           "Water trucking (500 L)"      = water_trucking,
+           "Butane (1 canister)"    = butane,
+           "Chicken (1 kg)"         = chicken,
+           "Chickpeas (1 kg)"       = chickpeas,
+           "Comb (1 unit)"          = comb,
+           "Dry milk (500 g)"       = dry_milk,
+           "Eggs (30 units)"        = eggs,
+           "Kerosene (1 L)"         = kerosene,
            "Nail clippers (1 unit)" = nail_clippers,
-           "Onions (1 kg)" = onions,
-           "Tea (500 g)" = tea,
-           "Towel (1 unit)" = towel,
-           "White beans (1 kg)" = white_beans,
-           "US dollars (1 USD)" = exchange_rate
+           "Onions (1 kg)"          = onions,
+           "Tea (500 g)"            = tea,
+           "Towel (1 unit)"         = towel,
+           "White beans (1 kg)"     = white_beans,
+           "US dollars (1 USD)"     = exchange_rate
     )
 
 prices_long <- gather(prices, Item, Price, 4:ncol(prices))                        # change dataframe to long format
@@ -144,42 +143,42 @@ indicators <- indicators %>%
            '% of traders reporting challenge in past 30 days: Other' = challenges.other,
            '% of traders reporting challenge in past 30 days: At least one challenge reported' = challenges.atleast1,
            
-           '% of traders reporting harmful supply route change in past 30 days' = supply_routes,
+           '% of traders reporting harmful supply route change in past 30 days'       = supply_routes,
            
-           '% of traders reporting shortage of LENTILS in past 30 days'        = lentils_shortage,
-           '% of traders reporting shortage of RICE in past 30 days'           = rice_shortage,
-           '% of traders reporting shortage of SUGAR in past 30 days'          = sugar_shortage,
-           '% of traders reporting shortage of SALT in past 30 days'           = salt_shortage,
-           '% of traders reporting shortage of BULGUR in past 30 days'         = bulgur_shortage,
-           '% of traders reporting shortage of VEGETABLE OIL in past 30 days'  = vegetable_oil_shortage,
-           '% of traders reporting shortage of WHEAT FLOUR in past 30 days'    = wheat_flour_shortage,
-           '% of traders reporting shortage of BATH SOAP in past 30 days'      = bath_soap_shortage,
-           '% of traders reporting shortage of TOOTHBRUSH in past 30 days'     = toothbrush_shortage,
-           '% of traders reporting shortage of TOOTHPASTE in past 30 days'     = toothpaste_shortage,
-           '% of traders reporting shortage of SHAMPOO in past 30 days'        = shampoo_shortage,
-           '% of traders reporting shortage of SANITARY NAPKINS in past 30 days' = sanitary_napkins_shortage,
-           '% of traders reporting shortage of GARBAGE BAGS in past 30 days'   = plastic_garbage_bags_shortage,
-           '% of traders reporting shortage of DETERGENT in past 30 days'      = detergent_shortage,
+           '% of traders reporting shortage of LENTILS in past 30 days'               = lentils_shortage,
+           '% of traders reporting shortage of RICE in past 30 days'                  = rice_shortage,
+           '% of traders reporting shortage of SUGAR in past 30 days'                 = sugar_shortage,
+           '% of traders reporting shortage of SALT in past 30 days'                  = salt_shortage,
+           '% of traders reporting shortage of BULGUR in past 30 days'                = bulgur_shortage,
+           '% of traders reporting shortage of VEGETABLE OIL in past 30 days'         = vegetable_oil_shortage,
+           '% of traders reporting shortage of WHEAT FLOUR in past 30 days'           = wheat_flour_shortage,
+           '% of traders reporting shortage of BATH SOAP in past 30 days'             = bath_soap_shortage,
+           '% of traders reporting shortage of TOOTHBRUSH in past 30 days'            = toothbrush_shortage,
+           '% of traders reporting shortage of TOOTHPASTE in past 30 days'            = toothpaste_shortage,
+           '% of traders reporting shortage of SHAMPOO in past 30 days'               = shampoo_shortage,
+           '% of traders reporting shortage of SANITARY NAPKINS in past 30 days'      = sanitary_napkins_shortage,
+           '% of traders reporting shortage of GARBAGE BAGS in past 30 days'          = plastic_garbage_bags_shortage,
+           '% of traders reporting shortage of DETERGENT in past 30 days'             = detergent_shortage,
            '% of traders reporting shortage of DISINFECTANT SOLUTION in past 30 days' = disinfectant_solution_shortage,
-           '% of traders reporting shortage of BOTTLED WATER in past 30 days'  = water_shortage,
-           '% of traders reporting shortage of WATER TRUCKING in past 30 days' = water_trucking_shortage,
+           '% of traders reporting shortage of BOTTLED WATER in past 30 days'         = water_shortage,
+           '% of traders reporting shortage of WATER TRUCKING in past 30 days'        = water_trucking_shortage,
            
-           '% of traders importing LENTILS'        = lentils_imported,
-           '% of traders importing RICE'           = rice_imported,
-           '% of traders importing SUGAR'          = sugar_imported,
-           '% of traders importing SALT'           = salt_imported,
-           '% of traders importing BULGUR'         = bulgur_imported,
-           '% of traders importing VEGETABLE OIL'  = vegetable_oil_imported,
-           '% of traders importing WHEAT FLOUR'    = wheat_flour_imported,
-           '% of traders importing BATH SOAP'      = bath_soap_imported,
-           '% of traders importing TOOTHBRUSH'     = toothbrush_imported,
-           '% of traders importing TOOTHPASTE'     = toothpaste_imported,
-           '% of traders importing SHAMPOO'        = shampoo_imported,
-           '% of traders importing SANITARY NAPKINS' = sanitary_napkins_imported,
-           '% of traders importing GARBAGE BAGS'   = plastic_garbage_bags_imported,
-           '% of traders importing DETERGENT'      = detergent_imported,
+           '% of traders importing LENTILS'               = lentils_imported,
+           '% of traders importing RICE'                  = rice_imported,
+           '% of traders importing SUGAR'                 = sugar_imported,
+           '% of traders importing SALT'                  = salt_imported,
+           '% of traders importing BULGUR'                = bulgur_imported,
+           '% of traders importing VEGETABLE OIL'         = vegetable_oil_imported,
+           '% of traders importing WHEAT FLOUR'           = wheat_flour_imported,
+           '% of traders importing BATH SOAP'             = bath_soap_imported,
+           '% of traders importing TOOTHBRUSH'            = toothbrush_imported,
+           '% of traders importing TOOTHPASTE'            = toothpaste_imported,
+           '% of traders importing SHAMPOO'               = shampoo_imported,
+           '% of traders importing SANITARY NAPKINS'      = sanitary_napkins_imported,
+           '% of traders importing GARBAGE BAGS'          = plastic_garbage_bags_imported,
+           '% of traders importing DETERGENT'             = detergent_imported,
            '% of traders importing DISINFECTANT SOLUTION' = disinfectant_solution_imported,
-           '% of traders importing BOTTLED WATER'  = water_imported
+           '% of traders importing BOTTLED WATER'         = water_imported
     )
 
 full <- left_join(prices, indicators, by = c("Date", "Governorate", "District"))
@@ -209,8 +208,8 @@ plot_location_list <- prices_long %>%                                           
 indicator_list <- names(indicators) %>%
     str_subset(c("Date", "Governorate", "District"), negate = TRUE)               # extract additional indicator list
 
-cols      <- c("rgb(238,88,89)", "rgb(88,88,90)", "rgb(165,201,161)",             # define color palette for plot lines
-               "rgb(86,179,205)", "rgb(246,158,97)", "rgb(255,246,122)",
+cols      <- c("rgb(238,88,89)",   "rgb(88,88,90)",    "rgb(165,201,161)",        # define color palette for plot lines
+               "rgb(86,179,205)",  "rgb(246,158,97)",  "rgb(255,246,122)",
                "rgb(210,203,184)", "rgb(247,172,172)", "rgb(172,172,173)",
                "rgb(210,228,208)", "rgb(171,217,230)", "rgb(251,207,176)",
                "rgb(255,251,189)", "rgb(233,229,220)")
@@ -244,22 +243,22 @@ prices_country_home <- prices_country %>%                                       
 prices_changes <- prices_country_long %>%                                         # calculate bi-monthly/yearly changes of item prices
     filter(Date == dates_max | Date == dates_max2 | Date == dates_max_1y) %>%
     group_by(Item) %>%
-    mutate(change = percent(Price/lag(Price, order_by=Date)-1, accuracy = 1),
+    mutate(change  = percent(Price/lag(Price, order_by=Date)-1, accuracy = 1),
            change2 = percent(Price/lag(Price, n = 2, order_by=Date)-1, accuracy = 1)) %>%
-    mutate(change = ifelse(!grepl('^\\-', change) & change != "0%" & !is.na(change), paste0("+", change, HTML(" &#9650;")), change),
-           change = ifelse(grepl('^\\-', change), paste0(change, HTML(" &#9660;")), change),
-           change = ifelse(change == "0%", paste0(change, HTML(" &#9654;")), change),
+    mutate(change  = ifelse(!grepl('^\\-', change) & change != "0%" & !is.na(change), paste0("+", change, HTML(" &#9650;")), change),
+           change  = ifelse(grepl('^\\-', change), paste0(change, HTML(" &#9660;")), change),
+           change  = ifelse(change == "0%", paste0(change, HTML(" &#9654;")), change),
            change2 = ifelse(!grepl('^\\-', change2) & change2 != "0%" & !is.na(change2), paste0("+", change2, HTML(" &#9650;")), change2),
            change2 = ifelse(grepl('^\\-', change2), paste0(change2, HTML(" &#9660;")), change2),
            change2 = ifelse(change2 == "0%", paste0(change2, HTML(" &#9654;")), change2)) %>%
     filter(Date == dates_max,
            !is.na(Price)) %>%
     select(-Date) %>%
-    mutate(Price  = format(Price, big.mark=","),
+    mutate(Price   = format(Price, big.mark=","),
            change2 = replace_na(change2, "NA")) %>%
-    rename("Price (in IQD)" = Price,
+    rename("Price (in IQD)"    = Price,
            "Bi-monthly change" = change,
-           "Yearly change" = change2)
+           "Yearly change"     = change2)
 
 prices_changes_items <- prices_changes %>%
     filter(!(str_detect(Item, "^SMEB") | Item == "US dollars (1 USD)"))
@@ -276,13 +275,13 @@ jram <- jram %>%
     filter(GPS_Coordinates != "") %>%                                                                     # delete entries without coordinates from JRAM dataset
     separate(GPS_Coordinates, c("lat","lon"), ",", convert = TRUE) %>%                                    # divide coordinates into latitude and longitude
     mutate(Link_to_Assessment = ifelse(Link_to_Assessment == "", "", paste0("<a href=", Link_to_Assessment, ">link</a>"))) %>%
-    mutate(popup_data = paste0('<strong>Lead partner: </strong>', Lead_Partner,                           # define pop up window contents
-                               '<br><strong>Governorate:</strong> ', Governorate,
-                               '<br><strong>Location:</strong> ', Location,
-                               '<br><strong>Market:</strong> ', Market,
-                               '<br><strong>Date:</strong> ', format(Date, "%B %Y"),
+    mutate(popup_data = paste0('<strong>Lead partner: </strong>',     Lead_Partner,                       # define pop up window contents
+                               '<br><strong>Governorate:</strong> ',  Governorate,
+                               '<br><strong>Location:</strong> ',     Location,
+                               '<br><strong>Market:</strong> ',       Market,
+                               '<br><strong>Date:</strong> ',         format(Date, "%B %Y"),
                                '<br><strong>Other partners involved:</strong> ', Other_partners_involved,
-                               '<br><strong>Info:</strong> ', Info,
+                               '<br><strong>Info:</strong> ',         Info,
                                '<br><strong>Contact name:</strong> ', Contact_Name,
                                '<br><strong>Contact email:</strong> <a href=mailto:', Contact_Email, '>', Contact_Email, '</a>',
                                '<br><strong>Link to assessment:</strong> ', Link_to_Assessment),
@@ -308,23 +307,24 @@ smeb_kbl <- smeb %>%                                                            
     column_spec(1, width = "8em", bold = T, background = "white") %>%
     column_spec(2, width = "10em") %>%
     column_spec(3, width = "8em") %>%
-    collapse_rows(columns = 1, valign = "top")
+    collapse_rows(columns = 1, valign = "top") %>%
+    row_spec(0:17, extra_css = "font-size: 11px;")
 
 
 table_changes_meb <- prices_changes_meb %>%                                                               # style key figures table
-        kbl(escape = F, format.args = list(big.mark = ","), align = "lrrr") %>%
-        kable_styling(bootstrap_options = c("striped", "hover", "condensed"), fixed_thead = T, full_width = F) %>%
-        column_spec(1, width = "10em") %>%
-        column_spec(3, color = ifelse(grepl('^\\+', prices_changes_meb$'Bi-monthly change'), "red", ifelse(grepl('^\\-', prices_changes_meb$'Bi-monthly change'), "green", "auto"))) %>%
-        column_spec(4, color = ifelse(grepl('^\\+', prices_changes_meb$'Yearly change'), "red", ifelse(grepl('^\\-', prices_changes_meb$'Yearly change'), "green", "auto"))) %>%
-        row_spec(0:5, extra_css = "font-size: 11px; 18px;")
+    kbl(escape = F, format.args = list(big.mark = ","), align = "lrrr") %>%
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed"), fixed_thead = T, full_width = F) %>%
+    column_spec(1, width = "10em") %>%
+    column_spec(3, color = ifelse(grepl('^\\+', prices_changes_meb$'Bi-monthly change'), "red", ifelse(grepl('^\\-', prices_changes_meb$'Bi-monthly change'), "green", "auto"))) %>%
+    column_spec(4, color = ifelse(grepl('^\\+', prices_changes_meb$'Yearly change'), "red", ifelse(grepl('^\\-', prices_changes_meb$'Yearly change'), "green", "auto"))) %>%
+    row_spec(0:5, extra_css = "font-size: 11px;")
     
 
 month_collected      <- paste0(format(dates_max, "%B"), " ",format(dates_max, "%Y"))                      # define overview of last round
 shops_covered        <- nrow(data_latest)
 districts_covered    <- n_distinct(data_latest$district, na.rm = FALSE)
 governorates_covered <- n_distinct(data_latest$governorate, na.rm = FALSE)
-overview_round       <- data.frame(figure = c("Month", "Shops covered", "Districts covered", "Governorates covered"),
+overview_round       <- data.frame(figure = c("Month", "Traders interviewed", "Districts covered", "Governorates covered"),
                                    value  = c(month_collected, shops_covered, districts_covered, governorates_covered)
                                    )
 
@@ -332,7 +332,7 @@ table_round <- overview_round %>%                                               
     kbl(escape = F, format.args = list(big.mark = ","), align = "lr", col.names = NULL) %>%
     column_spec(1, width = "12em") %>%
     kable_styling(bootstrap_options = c("striped", "hover", "condensed"), fixed_thead = T, full_width = T) %>%
-    row_spec(1, extra_css = "font-size: 11.5px; border-top: 2px solid gainsboro") %>%
+    row_spec(1,   extra_css = "font-size: 11.5px; border-top: 2px solid gainsboro") %>%
     row_spec(2:4, extra_css = "font-size: 11.5px;")
 
 
@@ -342,46 +342,44 @@ table_changes <- prices_changes_items %>%                                       
     column_spec(1, width = "14.5em") %>%
     column_spec(3, color = ifelse(grepl('^\\+', prices_changes_items$'Bi-monthly change'), "red", ifelse(grepl('^\\-', prices_changes_items$'Bi-monthly change'), "green", "auto"))) %>%
     column_spec(4, color = ifelse(grepl('^\\+', prices_changes_items$'Yearly change'), "red", ifelse(grepl('^\\-', prices_changes_items$'Yearly change'), "green", "auto"))) %>%
-    pack_rows("Food Items", 1, 7, label_row_css = "background-color: #efefef; font-size: 11px; height: 18px") %>%
-    pack_rows("Non-Food Items", 8, 15, label_row_css = "background-color: #efefef; font-size: 11px; height: 18px; border-top: 2px solid gainsboro") %>%
-    pack_rows("Water", 16, 17, label_row_css = "background-color: #efefef; font-size: 11px; height: 18px; border-top: 2px solid gainsboro") %>%
+    pack_rows("Food Items",     1, 7,   label_row_css = "background-color: #f5f5f5; font-size: 10.5px") %>%
+    pack_rows("Non-Food Items (NFIs)", 8, 15,  label_row_css = "background-color: #f5f5f5; font-size: 10.5px; border-top: 2px solid gainsboro") %>%
+    pack_rows("Water",          16, 17, label_row_css = "background-color: #f5f5f5; font-size: 10.5px; border-top: 2px solid gainsboro") %>%
     row_spec(0:17, extra_css = "font-size: 11px;")
-#%>%
-    #row_spec(c(7, 9, 17), extra_css = "border-bottom: 2px solid gainsboro")
 
 
 #### 6 UI ######################################################################
 
 ui <- bootstrapPage(
 
-    navbarPage("Joint Price Monitoring Initiative (JPMI)",                        # define dashboard title
-               theme = shinytheme("simplex"),                                     # set theme
+    navbarPage("Joint Price Monitoring Initiative (JPMI)",                                                # define dashboard title
+               theme = shinytheme("simplex"),                                                             # set theme
                
                #### * 6.1 Home ######################################################################
                
-               tabPanel("Dashboard",                                                                          # define panel title
-                        icon = icon("tachometer-alt"),                                                        # select icon to be displayed in front of title
+               tabPanel("Dashboard",                                                                      # define panel title
+                        icon = icon("tachometer-alt"),                                                    # select icon to be displayed in front of title
                         
-                        div(class="dashboard",                                                                # set dashboard class from CSS file
+                        div(class="dashboard",                                                            # set dashboard class from CSS file
                             
-                            tags$head(includeCSS("styles.css")),                                              # load CSS stylesheet
+                            tags$head(includeCSS("styles.css")),                                          # load CSS stylesheet
                             
-                            leafletOutput("map_home", width = "100%", height = "100%"),                       # display background map
+                            leafletOutput("map_home", width = "100%", height = "100%"),                   # display background map
                             
-                            absolutePanel(                                                                    # define introduction box
+                            absolutePanel(                                                                # define introduction box
                                 id = "home", class = "panel panel-default", fixed = FALSE, draggable = FALSE,
                                 top = "20", left = "20", right = "auto", bottom = "auto", width = "400", height = 350,
                                 h4("Introduction"),
                                 p("The Joint Price Monitoring Initiative (JPMI) is a bi-monthly data collection exercise launched by the Iraq Cash Working Group (CWG)
-                                  in November 2016. The initiative aims to inform cash-based interventions in Iraq by providing indicative information on key commodities
-                                  sold in local marketplaces. The initiative is guided by the CWG, led by REACH and supported by the CWG members.",
+                                   in November 2016. The initiative aims to inform cash-based interventions in Iraq by providing indicative information on key commodities
+                                   sold in local marketplaces. The initiative is guided by the CWG, led by REACH and supported by the CWG members.",
                                   style="text-align:justify"),
                                 p("This website displays a wide range of indicators collected through the JPMI, such as prices for key food
-                                  and non-food items (NFIs), as well as the costs associated with the Survival Minimum Expenditure Basket (SMEB).",
+                                   and non-food items (NFIs), as well as the costs associated with the Survival Minimum Expenditure Basket (SMEB).",
                                   style="text-align:justify"),
                                 p(tags$i(h6("Refer to the tools displayed in the panel above if you wish to analyse disaggregated data.
-                                            Display price data over time with the Price Plot, do spatial analysis with the Map, or
-                                            discover the data with the Data Explorer. See Info for more on the JPMI.",
+                                             Display price data over time with the Price Plot, do spatial analysis with the Map, or
+                                             discover the data with the Data Explorer. See Info for more on the JPMI.",
                                             style="color:grey;text-align:justify"))),
                                 br()
                             ),
@@ -413,18 +411,17 @@ ui <- bootstrapPage(
                             
                             absolutePanel(
                                 id = "home", class = "panel panel-default", fixed = FALSE, draggable = FALSE,
-                                top = "290", left = "440", right = "auto", bottom = "auto", width = "340", height = "180",
+                                top = "290", left = "440", right = "auto", bottom = "auto", width = "340", height = "185",
                                 h4("Latest Round"),
                                 HTML(table_round), br()
                             ),
                             
                             absolutePanel(
                                 id = "home", class = "panel panel-default", fixed = FALSE, draggable = FALSE,
-                                top = "490", left = "440", right = "auto", bottom = "auto", width = "340", height = "170",
+                                top = "495", left = "440", right = "auto", bottom = "auto", width = "340", height = "165",
                                 h4("Data Download"),
-                                "Visit the Data Explorer or download the full dataset from the latest round here:",
-                                br(), br(),
-                                downloadButton("downloadDataLatest",
+                                p("Visit the Data Explorer or download the full dataset from the latest round here:"),
+                                downloadButton("downloadDataLatest", style = "font-size: 12px",
                                                paste0("Download ", format(dates_max, "%B"), " ", format(dates_max, "%Y"), " dataset")),
                                 br(), br()
                             ),
@@ -437,19 +434,19 @@ ui <- bootstrapPage(
                                 HTML(table_changes), br()
                             ),
                             
-                            absolutePanel(id = "dropdown", top = 47, left = 740, width = 200, fixed=FALSE, draggable = FALSE, height = "auto",
+                            absolutePanel(id = "dropdown", top = 47, left = 645, width = 200, fixed=FALSE, draggable = FALSE, height = "auto",
                                           dropdown(
                                               h4("SMEB contents"),
                                               column(
                                                   HTML(smeb_kbl),
-                                                  width = 7),
+                                                  width = 6),
                                               column(p(h6("The Survival Minimum Expenditure Basket (SMEB) represents the minimum culturally adjusted group of items
-                                                             required to support a six-person Iraqi household for one month, as defined by the CWG.")),
+                                                           required to support a six-person Iraqi household for one month, as defined by the CWG.")),
                                                      p(h6("The SMEB reported on this website only includes the food, NFI and water components. Not included are rent,
-                                                             electricity, communication and transportation.")),
+                                                           electricity, communication and transportation.")),
                                                      p(h6("The composition of the SMEB was revised twice: 1) In the September
-                                                            2018 round and onwards, the current water component replaced the fuel component. 2) Since January 2020,
-                                                            the SMEB furthermore includes modified food and NFI components.")),
+                                                           2018 round and onwards, the current water component replaced the fuel component. 2) Since January 2020,
+                                                           the SMEB furthermore includes modified food and NFI components.")),
                                                      p(h6("More details on the SMEB can be found here:",
                                                           tags$a(href="https://www.humanitarianresponse.info/en/operations/iraq/document/survival-minimum-expenditure-basket-technical-guidance-note-october-2019",
                                                                  "SMEB Guidance Note"), ".")),
@@ -659,8 +656,8 @@ ui <- bootstrapPage(
                                 ),
                                 
                                 h6("Select aggregation level, item(s), location(s) and month from drop-down menues to update plot.
-                                   Displayed values are median prices - retail prices are first aggregated on site level and then
-                                   on district level (and then on governorate/country level)."),
+                                    Displayed values are median prices - retail prices are first aggregated on site level and then
+                                    on district level (and then on governorate/country level)."),
                                 
                                 absolutePanel(id = "dropdown", bottom = 20, left = 20, width = 200,                            # define blue info button
                                               fixed=TRUE, draggable = FALSE, height = "auto",
@@ -668,14 +665,14 @@ ui <- bootstrapPage(
                                                   h4("SMEB contents"),
                                                   column(
                                                       HTML(smeb_kbl),
-                                                      width = 7),
+                                                      width = 6),
                                                   column(p(h6("The Survival Minimum Expenditure Basket (SMEB) represents the minimum culturally adjusted group of items
-                                                             required to support a six-person Iraqi household for one month, as defined by the CWG.")),
+                                                               required to support a six-person Iraqi household for one month, as defined by the CWG.")),
                                                          p(h6("The SMEB reported on this website only includes the food, NFI and water components. Not included are rent,
-                                                             electricity, communication and transportation.")),
+                                                               electricity, communication and transportation.")),
                                                          p(h6("The composition of the SMEB was revised twice: 1) In the September
-                                                            2018 round and onwards, the current water component replaced the fuel component. 2) Since January 2020,
-                                                            the SMEB furthermore includes modified food and NFI components.")),
+                                                               2018 round and onwards, the current water component replaced the fuel component. 2) Since January 2020,
+                                                               the SMEB furthermore includes modified food and NFI components.")),
                                                          p(h6("More details on the SMEB can be found here:",
                                                               tags$a(href="https://www.humanitarianresponse.info/en/operations/iraq/document/survival-minimum-expenditure-basket-technical-guidance-note-october-2019",
                                                                      "SMEB Guidance Note"), ".")),
@@ -776,14 +773,14 @@ ui <- bootstrapPage(
                                                              h4("SMEB contents"),
                                                              column(
                                                                HTML(smeb_kbl),
-                                                               width = 7),
+                                                               width = 6),
                                                              column(p(h6("The Survival Minimum Expenditure Basket (SMEB) represents the minimum culturally adjusted group of items
-                                                             required to support a six-person Iraqi household for one month, as defined by the CWG.")),
+                                                                          required to support a six-person Iraqi household for one month, as defined by the CWG.")),
                                                                     p(h6("The SMEB reported on this website only includes the food, NFI and water components. Not included are rent,
-                                                             electricity, communication and transportation.")),
+                                                                          electricity, communication and transportation.")),
                                                                     p(h6("The composition of the SMEB was revised twice: 1) In the September
-                                                            2018 round and onwards, the current water component replaced the fuel component. 2) Since January 2020,
-                                                            the SMEB furthermore includes modified food and NFI components.")),
+                                                                          2018 round and onwards, the current water component replaced the fuel component. 2) Since January 2020,
+                                                                          the SMEB furthermore includes modified food and NFI components.")),
                                                                     p(h6("More details on the SMEB can be found here:",
                                                                          tags$a(href="https://www.humanitarianresponse.info/en/operations/iraq/document/survival-minimum-expenditure-basket-technical-guidance-note-october-2019",
                                                                                 "SMEB Guidance Note"), ".")),
@@ -820,8 +817,8 @@ ui <- bootstrapPage(
                                 
                                 conditionalPanel(condition = "input.table_aggregation != 'District'",
                                                  tags$i(h6("Note: Only district-level data can be displayed in the table on the right.
-                                                               You can download data on either aggregation level by setting your desired
-                                                               parameters and clicking on the download button below.",
+                                                            You can download data on either aggregation level by setting your desired
+                                                            parameters and clicking on the download button below.",
                                                           style="color:red")),
                                 ),
                                 
@@ -886,22 +883,22 @@ ui <- bootstrapPage(
                         column(
                             h4("Background"),
                             p("The Joint Price Monitoring Initiative (JPMI) was developed by the Cash Working Group (CWG) and REACH Initiative to conduct
-                              harmonized price monitoring activities among cash actors in Iraq.",
+                               harmonized price monitoring activities among cash actors in Iraq.",
                               style="text-align:justify;margin-bottom:20px"),
                             h4("Methodology"),
-                            p("In each assessed marketplace, JPMI field teams record indicators on selected food and non-food items (NFIs) sold by local retailers.
-                              Marketplaces are defined as permanent areas of commerce diverse enough to provide access to a variety of food and non-food items
-                              (NFIs). Within each district, marketplaces are selected by partner agency field staff in order to ensure that localized knowledge
-                              is taken into consideration. Partner staff are instructed to select primary markets within their selected districts to ensure
-                              relevant price data is collected.",
+                            p("In each assessed marketplace, JPMI field teams record indicators on selected food and non-food items sold by local retailers.
+                               Marketplaces are defined as permanent areas of commerce diverse enough to provide access to a variety of food and non-food items.
+                               Within each district, marketplaces are selected by partner agency field staff in order to ensure that localized knowledge
+                               is taken into consideration. Partner staff are instructed to select primary markets within their selected districts to ensure
+                               relevant price data is collected.",
                               style="text-align:justify;"),
                             p("Monitored commodities have been identified by the CWG based on what is typically consumed by an average Iraqi household.
-                              All assessable commodities of the Survival Minimum Expenditure Basket (SMEB) are included. In line with the purpose of the
-                              SMEB, only the lowest available prices are recorded for each item.",
+                               All assessable commodities of the Survival Minimum Expenditure Basket (SMEB) are included. In line with the purpose of the
+                               SMEB, only the lowest available prices are recorded for each item.",
                               style="text-align:justify;"),
                             p("All data collection is conducted through a KoBo-based mobile data collection tool. Following data collection, REACH compiles
-                              and cleans all partner data and crosschecks outliers with field teams. The cleaned data is then uploaded and displayed
-                              on this website. Data collection for the JPMI occurs on a bi-monthly basis with the website being updated after each round.",
+                               and cleans all partner data and crosschecks outliers with field teams. The cleaned data is then uploaded and displayed
+                               on this website. Data collection for the JPMI occurs on a bi-monthly basis with the website being updated after each round.",
                               style="text-align:justify;"),
                             p("For more details on methodology, refer to the ",
                               tags$a(href="https://www.impact-repository.org/document/reach/7a6169cc/reach_irq_tor_joint_price_monitoring_initiative_jpmi_july_2018_0.pdf", target = "_blank",
@@ -909,8 +906,8 @@ ui <- bootstrapPage(
                               style="text-align:justify;margin-bottom:20px"),
                             h4("Limitations"),
                             p("All data is gathered by partner agencies of the JPMI. As such, the geographic coverage of the JPMI is determined by
-                              partner capacity, ability and interest, and has changed over time. This means that the markets and districts covered
-                              across the assessed months are not consistent. These changes in coverage could have an impact on overall reported prices.",
+                               partner capacity, ability and interest, and has changed over time. This means that the markets and districts covered
+                               across the assessed months are not consistent. These changes in coverage could have an impact on overall reported prices.",
                               style="text-align:justify;margin-bottom:20px"),
                             h4("Contact"),
                             p("In case you have any questions about the JPMI, please contact:", tags$a(href="mailto:casey.clark@reach-initiative.org", "casey.clark@reach-initiative.org")),
@@ -920,29 +917,29 @@ ui <- bootstrapPage(
                         
                         column(
                             h4("Current Partners"),
-                            tags$a(href="https://www.acted.org/en/", "ACTED", target = "_blank"), br(),
+                            tags$a(href="https://www.acted.org/en/",           "ACTED", target = "_blank"), br(),
                             tags$a(href="https://www.care-international.org/", "CARE International", target = "_blank"), "/", tags$a(href="https://harikar.org/", "Harikar", target = "_blank"), br(),
-                            tags$a(href="https://drc.ngo/", "Danish Refugee Council (DRC)", target = "_blank"), br(),
-                            tags$a(href="https://www.rescue.org/", "International Rescue Committee (IRC)", target = "_blank"), br(),
-                            tags$a(href="https://www.mercycorps.org/", "Mercy Corps", target = "_blank"), br(),
-                            tags$a(href="https://www.nrc.no/", "Norwegian Refugee Council (NRC)", target = "_blank"), br(),
-                            tags$a(href="https://www.oxfam.org/en", "Oxfam", target = "_blank"), br(),
-                            tags$a(href="https://www.clovekvtisni.cz/en/", "People in Need (PIN)", target = "_blank"), br(),
+                            tags$a(href="https://drc.ngo/",                    "Danish Refugee Council (DRC)", target = "_blank"), br(),
+                            tags$a(href="https://www.rescue.org/",             "International Rescue Committee (IRC)", target = "_blank"), br(),
+                            tags$a(href="https://www.mercycorps.org/",         "Mercy Corps", target = "_blank"), br(),
+                            tags$a(href="https://www.nrc.no/",                 "Norwegian Refugee Council (NRC)", target = "_blank"), br(),
+                            tags$a(href="https://www.oxfam.org/en",            "Oxfam", target = "_blank"), br(),
+                            tags$a(href="https://www.clovekvtisni.cz/en/",     "People in Need (PIN)", target = "_blank"), br(),
                             br(),
                             h4("Former Partners"),
-                            tags$a(href="https://www.actioncontrelafaim.org/en/", "Action contre la Faim (ACF)", target = "_blank"), br(),
-                            tags$a(href="https://www.drk.de/en/", "German Red Cross (GRC)", target = "_blank"), "/", tags$a(href="https://en.ircs.org.iq/", "Iraqi Red Crescent Society (IRCS)", target = "_blank"), br(),
-                            tags$a(href="https://www.medair.org/", "Medair", target = "_blank"), br(),
-                            tags$a(href="https://www.pah.org.pl/en/", "Polish Humanitarian Action (PAH)", target = "_blank"), br(),
-                            tags$a(href="https://www.qandil.org/", "Qandil", target = "_blank"), br(),
-                            tags$a(href="https://www.ri.org/", "Relief International (RI)", target = "_blank"), br(),
-                            tags$a(href="https://www.savethechildren.net/", "Save the Children", target = "_blank"), br(),
-                            tags$a(href="https://www.tearfund.org/", "Tearfund", target = "_blank"), br(),
-                            tags$a(href="https://www.tdh.ch/en", "Terre des Hommes (TdH)", target = "_blank"), br(),
+                            tags$a(href="https://www.actioncontrelafaim.org/en/",  "Action contre la Faim (ACF)", target = "_blank"), br(),
+                            tags$a(href="https://www.drk.de/en/",                  "German Red Cross (GRC)", target = "_blank"), "/", tags$a(href="https://en.ircs.org.iq/", "Iraqi Red Crescent Society (IRCS)", target = "_blank"), br(),
+                            tags$a(href="https://www.medair.org/",                 "Medair", target = "_blank"), br(),
+                            tags$a(href="https://www.pah.org.pl/en/",              "Polish Humanitarian Action (PAH)", target = "_blank"), br(),
+                            tags$a(href="https://www.qandil.org/",                 "Qandil", target = "_blank"), br(),
+                            tags$a(href="https://www.ri.org/",                     "Relief International (RI)", target = "_blank"), br(),
+                            tags$a(href="https://www.savethechildren.net/",        "Save the Children", target = "_blank"), br(),
+                            tags$a(href="https://www.tearfund.org/",               "Tearfund", target = "_blank"), br(),
+                            tags$a(href="https://www.tdh.ch/en",                   "Terre des Hommes (TdH)", target = "_blank"), br(),
                             tags$a(href="https://www.trianglegh.org/index_en.php", "Triangle Génération Humanitaire (TGH)", target = "_blank"), br(),
-                            tags$a(href="https://www.unhcr.org/", "UNHCR", target = "_blank"), br(),
-                            tags$a(href="https://www.welthungerhilfe.org/", "Welthungerhilfe", target = "_blank"), br(),
-                            tags$a(href="https://www.worldvision.org/", "World Vision", target = "_blank"), br(),
+                            tags$a(href="https://www.unhcr.org/",                  "UNHCR", target = "_blank"), br(),
+                            tags$a(href="https://www.welthungerhilfe.org/",        "Welthungerhilfe", target = "_blank"), br(),
+                            tags$a(href="https://www.worldvision.org/",            "World Vision", target = "_blank"), br(),
                             width=6)
                         ),
 
@@ -988,30 +985,30 @@ ui <- bootstrapPage(
                                           dropdown(
                                               h4("Introduction"),
                                               p("The Joint Rapid Assessment of Markets (JRAM) was developed and launched by the Cash Working Group of
-                                                Iraq (CWG) in April 2017 in order to establish a harmonised and collaborative mechanism for conducting
-                                                market assessments in areas newly accessible to humanitarian actors. The CWG serves as the mandating
-                                                body for the assessment, with REACH Initiative (REACH) acting as a technical partner and CWG partners
-                                                carrying out all field-level data collection, analysis, and reporting. The JRAM was designed to provide
-                                                comprehensive market-level data on the impact of protracted crises on markets, specifically with respect
-                                                to the status of infrastructure, security, and suppliers; the prices and availability of key goods; and
-                                                the response capacity of traders. The data collected are then used to determine if cash and market-based
-                                                programming are appropriate intervention mechanisms. This dashboard presents the locations and lead
-                                                partners for JRAMs conducted since August 2017.", style="text-align: justify;margin-bottom:20px"),
+                                                 Iraq (CWG) in April 2017 in order to establish a harmonised and collaborative mechanism for conducting
+                                                 market assessments in areas newly accessible to humanitarian actors. The CWG serves as the mandating
+                                                 body for the assessment, with REACH Initiative (REACH) acting as a technical partner and CWG partners
+                                                 carrying out all field-level data collection, analysis, and reporting. The JRAM was designed to provide
+                                                 comprehensive market-level data on the impact of protracted crises on markets, specifically with respect
+                                                 to the status of infrastructure, security, and suppliers; the prices and availability of key goods; and
+                                                 the response capacity of traders. The data collected are then used to determine if cash and market-based
+                                                 programming are appropriate intervention mechanisms. This dashboard presents the locations and lead
+                                                 partners for JRAMs conducted since August 2017.", style="text-align: justify;margin-bottom:20px"),
                                               h4("Methodology"),
                                               p("The JRAM uses a qualitative approach based on the Rapid Assessment of Markets (RAM) system developed by
-                                                the International Committee of the Red Cross (ICRC). The populations of interest are market actors in the
-                                                selected area, including wholesalers, retailers, and consumers. CWG partners identify relevant markets
-                                                for assessment based on operational relevance and feasibility. Partners use purposive sampling to identify
-                                                respondents from each of the three groups, and undertake field data collection using an ODK-based
-                                                questionnaire. Partners then clean and analyse data using tools and guidance developed by REACH.", style="text-align: justify;margin-bottom:20px"),
+                                                 the International Committee of the Red Cross (ICRC). The populations of interest are market actors in the
+                                                 selected area, including wholesalers, retailers, and consumers. CWG partners identify relevant markets
+                                                 for assessment based on operational relevance and feasibility. Partners use purposive sampling to identify
+                                                 respondents from each of the three groups, and undertake field data collection using an ODK-based
+                                                 questionnaire. Partners then clean and analyse data using tools and guidance developed by REACH.", style="text-align: justify;margin-bottom:20px"),
                                               h4("Limitations"),
                                               p("Due to the qualitative nature of the JRAM, findings are indicative only and cannot be statistically
-                                              generalised to the assessed area. Findings are also relevant only to the specified markets and should not
-                                              be regarded as indicative of market functionality elsewhere in Iraq.", style="text-align: justify;margin-bottom:20px"),
+                                                 generalised to the assessed area. Findings are also relevant only to the specified markets and should not
+                                                 be regarded as indicative of market functionality elsewhere in Iraq.", style="text-align: justify;margin-bottom:20px"),
                                               h4("Disclaimer"),
                                               p("All responsibility for data quality, analysis, interpretation, and outputs lies with the implementing
-                                                partner who led the JRAM. REACH does not validate partner data, analysis, or findings. Providing links
-                                                to publicly available results therefore does not necessarily imply endorsement by REACH.", style="text-align: justify;"),
+                                                 partner who led the JRAM. REACH does not validate partner data, analysis, or findings. Providing links
+                                                 to publicly available results therefore does not necessarily imply endorsement by REACH.", style="text-align: justify;"),
                                               width = "800px",
                                               #size = "sm",
                                               up = FALSE,
@@ -1079,21 +1076,18 @@ server <- function(input, output, session) {
                            Date == input$select_date_boxplot
                        )
             ) %>%
-            execute_if(input$plot_aggregation == 'District', filter(is.null(plot_district_select()) | District %in% plot_district_select())) %>%
+            execute_if(input$plot_aggregation == 'District',    filter(is.null(plot_district_select()) | District %in% plot_district_select())) %>%
             execute_if(input$plot_aggregation == 'Governorate', select(-District)) %>%
             execute_if(input$plot_aggregation == 'Governorate', group_by(Date, Governorate, Item)) %>%
             execute_if(input$plot_aggregation == 'Governorate', summarise_all(median, na.rm = TRUE)) %>%
             execute_if(input$plot_aggregation == 'Governorate', filter(is.null(plot_governorate_select()) | Governorate %in% plot_governorate_select())) %>%
-            execute_if(input$plot_type == 'Line Graph' & input$plot_aggregation == 'Country', select(-Governorate, -District)) %>%
-            execute_if(input$plot_type == 'Line Graph' & input$plot_aggregation == 'Country', group_by(Date, Item)) %>%
-            execute_if(input$plot_type == 'Line Graph' & input$plot_aggregation == 'Country', summarise_all(median, na.rm = TRUE)) %>%
-            execute_if(((input$plot_type == 'Line Graph' & input$plot_aggregation == 'Country') | input$plot_aggregation != 'Country') & input$select_index == 'TRUE' & input$plot_aggregation == 'District',
-                       group_by(Governorate, District, Item)) %>%
-            execute_if(((input$plot_type == 'Line Graph' & input$plot_aggregation == 'Country') | input$plot_aggregation != 'Country') & input$select_index == 'TRUE' & input$plot_aggregation == 'Governorate',
-                       group_by(Governorate, Item)) %>%
-            execute_if(((input$plot_type == 'Line Graph' & input$plot_aggregation == 'Country') | input$plot_aggregation != 'Country') & input$select_index == 'TRUE' & input$plot_aggregation == 'Country',
-                       group_by(Item)) %>%
-            execute_if(((input$plot_type == 'Line Graph' & input$plot_aggregation == 'Country') | input$plot_aggregation != 'Country') & input$select_index == 'TRUE',
+            execute_if(input$plot_aggregation == 'Country'      & input$plot_type == 'Line Graph', select(-Governorate, -District)) %>%
+            execute_if(input$plot_aggregation == 'Country'      & input$plot_type == 'Line Graph', group_by(Date, Item)) %>%
+            execute_if(input$plot_aggregation == 'Country'      & input$plot_type == 'Line Graph', summarise_all(median, na.rm = TRUE)) %>%
+            execute_if(input$plot_aggregation == 'District'     & input$select_index == 'TRUE', group_by(Governorate, District, Item)) %>%
+            execute_if(input$plot_aggregation == 'Governorate'  & input$select_index == 'TRUE', group_by(Governorate, Item)) %>%
+            execute_if(input$plot_aggregation == 'Country'      & input$plot_type == 'Line Graph' & input$select_index == 'TRUE', group_by(Item)) %>%
+            execute_if((input$plot_aggregation == 'Country' & input$plot_type == 'Line Graph' | input$plot_aggregation != 'Country') & input$select_index == 'TRUE',
                        mutate(Price = round(((Price / c(Price[Date == input$select_date_index], NA)[1])-1)*100, digits = 1))) %>%
             filter(!is.na(Price))
     })
@@ -1136,9 +1130,9 @@ server <- function(input, output, session) {
                 ) %>%
                 hc_tooltip(pointFormat = "Max: {point.high}<br>
                                           Q3:\u00a0\u00a0 {point.q3}<br>
-                                          <b>Med: {point.median}</b><br>
+                                          Med: {point.median}<br>
                                           Q1:\u00a0\u00a0 {point.q1}<br>
-                                          Min: {point.low}<br>")
+                                          Min:\u00a0 {point.low}<br>")
             
             
         } else if (input$plot_aggregation == "Country" | (input$plot_aggregation == "District" & input$plot_by_district_item == "Item") | (input$plot_aggregation == "Governorate" & input$plot_by_governorate_item == "Item")) {
@@ -1156,20 +1150,20 @@ server <- function(input, output, session) {
             hc_exporting(
                 enabled = TRUE,
                 filename = paste0("IRQ-JPMI-linegraph_export-", Sys.Date()),
-                buttons = list(
-                    contextButton = list(
-                        menuItems = list("downloadPNG", "downloadPDF", "downloadCSV")
-                    )),
+                buttons = list(contextButton = list(menuItems = list("downloadPNG", "downloadPDF", "downloadCSV"))),
                 sourceWidth = 1000,
                 sourceHeight = 600
             ) %>%
-            execute_if(input$select_index == 'TRUE',
-                       hc_xAxis(plotLines = list(list(label = list(text = "Ref. month", style = list(fontSize = "11px", color = "dimgrey")), width = 1, color = "#FF0000", dashStyle = "dash", value = datetime_to_timestamp(as.Date(input$select_date_index, tz = 'UTC')))))
+            execute_if(input$select_index == 'TRUE' & !(input$plot_type == 'Boxplot' & input$plot_aggregation == 'Country'),
+                       hc_xAxis(plotLines = list(list(label = list(text = "Ref. month", style = list(fontSize = "11px", color = "dimgrey")),
+                                                      width = 1, color = "#FF0000", dashStyle = "dash",
+                                                      value = datetime_to_timestamp(as.Date(input$select_date_index, tz = 'UTC')))))
             ) %>%
-            execute_if(input$select_index == 'TRUE',
-                       hc_yAxis(labels = list(format = "{value}%"), title = list(text = "% deviation from ref. month"), plotLines = list(list(width = 1, color = "#FF0000", dashStyle = "dash", value = 0, zIndex=2)))
+            execute_if(input$select_index == 'TRUE' & !(input$plot_type == 'Boxplot' & input$plot_aggregation == 'Country'),
+                       hc_yAxis(labels = list(format = "{value}%"), title = list(text = "% deviation from ref. month"),
+                                plotLines = list(list(width = 1, color = "#FF0000", dashStyle = "dash", value = 0, zIndex=2)))
             ) %>%
-            execute_if(input$select_index == 'TRUE',
+            execute_if(input$select_index == 'TRUE' & !(input$plot_type == 'Boxplot' & input$plot_aggregation == 'Country'),
                        hc_tooltip(valueSuffix = "%") 
             ) %>%
             execute_if(input$select_index == 'FALSE',
@@ -1321,19 +1315,19 @@ server <- function(input, output, session) {
     #### 7.4 Data Explorer ######################################################################
 
     table_datasetInput1 <- reactive({
-            full %>% filter(
-                is.null(input$table_district) | District %in% input$table_district,
-                Date >= input$table_date_select[1] & Date <= input$table_date_select[2]
-            ) %>%
-                select("Date", "Governorate", "District", input$table_show_vars)
+        full %>% filter(
+            is.null(input$table_district) | District %in% input$table_district,
+            Date >= input$table_date_select[1] & Date <= input$table_date_select[2]
+        ) %>%
+            select("Date", "Governorate", "District", input$table_show_vars)
     })
     
     table_datasetInput2 <- reactive({
-            data %>% filter(
-                is.null(input$table_district) | district %in% input$table_district,
-                date >= input$table_date_select[1] & date <= input$table_date_select[2]
-            ) %>%
-                select(input$table_show_vars_ki)
+        data %>% filter(
+            is.null(input$table_district) | district %in% input$table_district,
+            date >= input$table_date_select[1] & date <= input$table_date_select[2]
+        ) %>%
+            select(input$table_show_vars_ki)
     })
     
     table_datasetInput <- reactive({
@@ -1357,7 +1351,6 @@ server <- function(input, output, session) {
                 dec.mark = getOption("OutDec")
             ) %>%
             formatStyle(names(table_datasetInput1()), "white-space"="nowrap")
-            #formatStyle(3, `border-right` = "solid 1px gainsboro")
     })
     
     output$downloadData <- downloadHandler(
